@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  bwb:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: bwb:0.1.0
+    volumes:
+      - ../output:/app/output
+      - ../figures:/app/figures
+      - ../data_raw:/app/data_raw:ro
+    environment:
+      BWB_REGION: matopiba
+      BWB_LOG_LEVEL: INFO
+    command: ["info"]
+
+  validate:
+    extends: bwb
+    command: ["validate", "--fast"]
+
+  sensitivity:
+    extends: bwb
+    command: ["sensitivity", "--city", "Balsas", "--cycle", "2023", "--n", "1000"]
+
+  figures:
+    extends: bwb
+    command: ["figures"]

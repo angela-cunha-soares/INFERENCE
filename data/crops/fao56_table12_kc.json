@@ -1,0 +1,1627 @@
+{
+    "metadata": {
+        "title": "FAO-56 Table 12 - Single (time-averaged) crop coefficients Kc and mean maximum plant heights",
+        "source": "Allen, R.G., Pereira, L.S., Raes, D., Smith, M. (1998). FAO Irrigation and Drainage Paper No. 56. Crop Evapotranspiration: Guidelines for computing crop water requirements. Rome: FAO.",
+        "url": "https://www.fao.org/4/X0490E/x0490e0b.htm",
+        "table_reference": "Table 12, Chapter 6",
+        "calibration_conditions": {
+            "climate": "subhumid",
+            "rh_min_percent": 45,
+            "wind_speed_2m_m_per_s": 2.0
+        },
+        "use_with": "FAO Penman-Monteith reference evapotranspiration (ETo)",
+        "field_definitions": {
+            "kc.ini": "Crop coefficient during initial growth stage",
+            "kc.mid": "Crop coefficient during mid-season stage",
+            "kc.end": "Crop coefficient at the end of the late-season stage",
+            "max_height_m": "Mean maximum plant height (m)",
+            "category": "FAO-56 Table 12 grouping (a-p)",
+            "notes": "Relevant FAO-56 footnote text"
+        },
+        "value_encoding": {
+            "scalar": "Single numeric value (e.g., 1.15)",
+            "range": "Object {low, high} when FAO-56 specifies a range (e.g., {\"low\": 1.0, \"high\": 1.15})"
+        },
+        "applicability_notes": [
+            "Values are for non-stressed crops under excellent agronomic and water management conditions.",
+            "For RHmin different from 45% or u2 different from 2 m/s, Kc_mid and Kc_end must be adjusted using FAO-56 Eq. 62 and 65.",
+            "For high-frequency wetting (drip or daily rainfall), Kc_ini may approach 1.0-1.2; consider Eq. 7-3 (Annex 7) or dual coefficient (Kcb + Ke)."
+        ],
+        "version": "1.0.0",
+        "last_updated": "2026-04-27"
+    },
+    "categories": {
+        "a_small_vegetables": {
+            "name": "Small Vegetables",
+            "group_kc_ini": 0.70
+        },
+        "b_solanaceae": {
+            "name": "Vegetables - Solanum Family (Solanaceae)",
+            "group_kc_ini": 0.60
+        },
+        "c_cucurbitaceae": {
+            "name": "Vegetables - Cucumber Family (Cucurbitaceae)",
+            "group_kc_ini": 0.50
+        },
+        "d_roots_tubers": {
+            "name": "Roots and Tubers",
+            "group_kc_ini": 0.50
+        },
+        "e_legumes": {
+            "name": "Legumes (Leguminosae)",
+            "group_kc_ini": 0.40
+        },
+        "f_perennial_vegetables": {
+            "name": "Perennial Vegetables",
+            "group_kc_ini": 0.50
+        },
+        "g_fibre_crops": {
+            "name": "Fibre Crops",
+            "group_kc_ini": 0.35
+        },
+        "h_oil_crops": {
+            "name": "Oil Crops",
+            "group_kc_ini": 0.35
+        },
+        "i_cereals": {
+            "name": "Cereals",
+            "group_kc_ini": 0.30
+        },
+        "j_forages": {
+            "name": "Forages",
+            "group_kc_ini": null
+        },
+        "k_sugar_cane": {
+            "name": "Sugar Cane",
+            "group_kc_ini": null
+        },
+        "l_tropical_fruits_trees": {
+            "name": "Tropical Fruits and Trees",
+            "group_kc_ini": null
+        },
+        "m_grapes_berries": {
+            "name": "Grapes and Berries",
+            "group_kc_ini": null
+        },
+        "n_fruit_trees": {
+            "name": "Fruit Trees",
+            "group_kc_ini": null
+        },
+        "o_wetlands_temperate": {
+            "name": "Wetlands (temperate climate)",
+            "group_kc_ini": null
+        },
+        "p_special": {
+            "name": "Special",
+            "group_kc_ini": null
+        }
+    },
+    "crops": {
+        "broccoli": {
+            "name": "Broccoli",
+            "scientific_name": "Brassica oleracea var. italica",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.05,
+                "end": 0.95
+            },
+            "max_height_m": 0.3
+        },
+        "brussels_sprouts": {
+            "name": "Brussels Sprouts",
+            "scientific_name": "Brassica oleracea var. gemmifera",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.05,
+                "end": 0.95
+            },
+            "max_height_m": 0.4
+        },
+        "cabbage": {
+            "name": "Cabbage",
+            "scientific_name": "Brassica oleracea var. capitata",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.05,
+                "end": 0.95
+            },
+            "max_height_m": 0.4
+        },
+        "carrots": {
+            "name": "Carrots",
+            "scientific_name": "Daucus carota",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.05,
+                "end": 0.95
+            },
+            "max_height_m": 0.3
+        },
+        "cauliflower": {
+            "name": "Cauliflower",
+            "scientific_name": "Brassica oleracea var. botrytis",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.05,
+                "end": 0.95
+            },
+            "max_height_m": 0.4
+        },
+        "celery": {
+            "name": "Celery",
+            "scientific_name": "Apium graveolens",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.05,
+                "end": 1.00
+            },
+            "max_height_m": 0.6
+        },
+        "garlic": {
+            "name": "Garlic",
+            "scientific_name": "Allium sativum",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.00,
+                "end": 0.70
+            },
+            "max_height_m": 0.3
+        },
+        "lettuce": {
+            "name": "Lettuce",
+            "scientific_name": "Lactuca sativa",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.00,
+                "end": 0.95
+            },
+            "max_height_m": 0.3
+        },
+        "onions_dry": {
+            "name": "Onions (dry)",
+            "scientific_name": "Allium cepa",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.05,
+                "end": 0.75
+            },
+            "max_height_m": 0.4
+        },
+        "onions_green": {
+            "name": "Onions (green)",
+            "scientific_name": "Allium cepa",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.00,
+                "end": 1.00
+            },
+            "max_height_m": 0.3
+        },
+        "onions_seed": {
+            "name": "Onions (seed)",
+            "scientific_name": "Allium cepa",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.05,
+                "end": 0.80
+            },
+            "max_height_m": 0.5
+        },
+        "spinach": {
+            "name": "Spinach",
+            "scientific_name": "Spinacia oleracea",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.00,
+                "end": 0.95
+            },
+            "max_height_m": 0.3
+        },
+        "radish": {
+            "name": "Radish",
+            "scientific_name": "Raphanus sativus",
+            "category": "a_small_vegetables",
+            "kc": {
+                "ini": 0.70,
+                "mid": 0.90,
+                "end": 0.85
+            },
+            "max_height_m": 0.3
+        },
+        "egg_plant": {
+            "name": "Egg Plant",
+            "scientific_name": "Solanum melongena",
+            "category": "b_solanaceae",
+            "kc": {
+                "ini": 0.60,
+                "mid": 1.05,
+                "end": 0.90
+            },
+            "max_height_m": 0.8
+        },
+        "sweet_peppers_bell": {
+            "name": "Sweet Peppers (bell)",
+            "scientific_name": "Capsicum annuum",
+            "category": "b_solanaceae",
+            "kc": {
+                "ini": 0.60,
+                "mid": 1.05,
+                "end": 0.90
+            },
+            "max_height_m": 0.7,
+            "notes": "Footnote 2: When grown on stalks reaching 1.5-2 m height, increase Kc_mid to 1.15."
+        },
+        "tomato": {
+            "name": "Tomato",
+            "scientific_name": "Solanum lycopersicum",
+            "category": "b_solanaceae",
+            "kc": {
+                "ini": 0.60,
+                "mid": 1.15,
+                "end": {
+                    "low": 0.70,
+                    "high": 0.90
+                }
+            },
+            "max_height_m": 0.6,
+            "notes": "Footnote 2: When grown on stalks reaching 1.5-2 m height, increase Kc_mid to 1.20."
+        },
+        "cantaloupe": {
+            "name": "Cantaloupe",
+            "scientific_name": "Cucumis melo",
+            "category": "c_cucurbitaceae",
+            "kc": {
+                "ini": 0.50,
+                "mid": 0.85,
+                "end": 0.60
+            },
+            "max_height_m": 0.3
+        },
+        "cucumber_fresh_market": {
+            "name": "Cucumber (Fresh Market)",
+            "scientific_name": "Cucumis sativus",
+            "category": "c_cucurbitaceae",
+            "kc": {
+                "ini": 0.60,
+                "mid": 1.00,
+                "end": 0.75
+            },
+            "max_height_m": 0.3,
+            "notes": "Footnote 2: When grown on stalks reaching 1.5-2 m height, increase Kc_mid to 1.15."
+        },
+        "cucumber_machine_harvest": {
+            "name": "Cucumber (Machine harvest)",
+            "scientific_name": "Cucumis sativus",
+            "category": "c_cucurbitaceae",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.00,
+                "end": 0.90
+            },
+            "max_height_m": 0.3
+        },
+        "pumpkin_winter_squash": {
+            "name": "Pumpkin, Winter Squash",
+            "scientific_name": "Cucurbita maxima / Cucurbita pepo",
+            "category": "c_cucurbitaceae",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.00,
+                "end": 0.80
+            },
+            "max_height_m": 0.4
+        },
+        "squash_zucchini": {
+            "name": "Squash, Zucchini",
+            "scientific_name": "Cucurbita pepo",
+            "category": "c_cucurbitaceae",
+            "kc": {
+                "ini": 0.50,
+                "mid": 0.95,
+                "end": 0.75
+            },
+            "max_height_m": 0.3
+        },
+        "sweet_melons": {
+            "name": "Sweet Melons",
+            "scientific_name": "Cucumis melo",
+            "category": "c_cucurbitaceae",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.05,
+                "end": 0.75
+            },
+            "max_height_m": 0.4
+        },
+        "watermelon": {
+            "name": "Watermelon",
+            "scientific_name": "Citrullus lanatus",
+            "category": "c_cucurbitaceae",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.00,
+                "end": 0.75
+            },
+            "max_height_m": 0.4
+        },
+        "beets_table": {
+            "name": "Beets, table",
+            "scientific_name": "Beta vulgaris",
+            "category": "d_roots_tubers",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.05,
+                "end": 0.95
+            },
+            "max_height_m": 0.4
+        },
+        "cassava_year_1": {
+            "name": "Cassava (year 1)",
+            "scientific_name": "Manihot esculenta",
+            "category": "d_roots_tubers",
+            "kc": {
+                "ini": 0.30,
+                "mid": 0.80,
+                "end": 0.30
+            },
+            "max_height_m": 1.0,
+            "notes": "Footnote 3: Mid-season values assume non-stressed conditions during/following the rainy season. Kc_end accounts for dormancy during the dry season."
+        },
+        "cassava_year_2": {
+            "name": "Cassava (year 2)",
+            "scientific_name": "Manihot esculenta",
+            "category": "d_roots_tubers",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.10,
+                "end": 0.50
+            },
+            "max_height_m": 1.5,
+            "notes": "Footnote 3: Mid-season values assume non-stressed conditions during/following the rainy season."
+        },
+        "parsnip": {
+            "name": "Parsnip",
+            "scientific_name": "Pastinaca sativa",
+            "category": "d_roots_tubers",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.05,
+                "end": 0.95
+            },
+            "max_height_m": 0.4
+        },
+        "potato": {
+            "name": "Potato",
+            "scientific_name": "Solanum tuberosum",
+            "category": "d_roots_tubers",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.15,
+                "end": 0.75
+            },
+            "max_height_m": 0.6,
+            "notes": "Footnote 4: Kc_end is about 0.40 for long-season potatoes with vine kill."
+        },
+        "sweet_potato": {
+            "name": "Sweet Potato",
+            "scientific_name": "Ipomoea batatas",
+            "category": "d_roots_tubers",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.15,
+                "end": 0.65
+            },
+            "max_height_m": 0.4
+        },
+        "turnip_rutabaga": {
+            "name": "Turnip (and Rutabaga)",
+            "scientific_name": "Brassica rapa / Brassica napobrassica",
+            "category": "d_roots_tubers",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.10,
+                "end": 0.95
+            },
+            "max_height_m": 0.6
+        },
+        "sugar_beet": {
+            "name": "Sugar Beet",
+            "scientific_name": "Beta vulgaris subsp. vulgaris",
+            "category": "d_roots_tubers",
+            "kc": {
+                "ini": 0.35,
+                "mid": 1.20,
+                "end": 0.70
+            },
+            "max_height_m": 0.5,
+            "notes": "Footnote 5: Kc_end of 0.70 is for no irrigation during the last month. With irrigation or significant rain in the last month, Kc_end can reach up to 1.0."
+        },
+        "beans_green": {
+            "name": "Beans, green",
+            "scientific_name": "Phaseolus vulgaris",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.05,
+                "end": 0.90
+            },
+            "max_height_m": 0.4,
+            "notes": "Footnote 2: When grown on stalks reaching 1.5-2 m height, increase Kc_mid to 1.15."
+        },
+        "beans_dry_pulses": {
+            "name": "Beans, dry and Pulses",
+            "scientific_name": "Phaseolus vulgaris",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.15,
+                "end": 0.35
+            },
+            "max_height_m": 0.4,
+            "notes": "Footnote 2: When grown on stalks reaching 1.5-2 m height, increase Kc_mid to 1.20."
+        },
+        "chick_pea": {
+            "name": "Chick pea",
+            "scientific_name": "Cicer arietinum",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.00,
+                "end": 0.35
+            },
+            "max_height_m": 0.4
+        },
+        "fababean_fresh": {
+            "name": "Fababean / Broad bean (Fresh)",
+            "scientific_name": "Vicia faba",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.15,
+                "end": 1.10
+            },
+            "max_height_m": 0.8,
+            "notes": "Footnote 2: When grown on stalks reaching 1.5-2 m height, increase Kc_mid to 1.20."
+        },
+        "fababean_dry_seed": {
+            "name": "Fababean / Broad bean (Dry/Seed)",
+            "scientific_name": "Vicia faba",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.15,
+                "end": 0.30
+            },
+            "max_height_m": 0.8,
+            "notes": "Footnote 2: When grown on stalks reaching 1.5-2 m height, increase Kc_mid to 1.20."
+        },
+        "grabanzo": {
+            "name": "Grabanzo",
+            "scientific_name": "Cicer arietinum",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.15,
+                "end": 0.35
+            },
+            "max_height_m": 0.8
+        },
+        "green_gram_cowpeas": {
+            "name": "Green Gram and Cowpeas",
+            "scientific_name": "Vigna radiata / Vigna unguiculata",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.05,
+                "end": {
+                    "low": 0.35,
+                    "high": 0.60
+                }
+            },
+            "max_height_m": 0.4,
+            "notes": "Footnote 6: First Kc_end value (0.60) is for harvested fresh; second value (0.35) is for harvested dry."
+        },
+        "groundnut_peanut": {
+            "name": "Groundnut (Peanut)",
+            "scientific_name": "Arachis hypogaea",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.15,
+                "end": 0.60
+            },
+            "max_height_m": 0.4
+        },
+        "lentil": {
+            "name": "Lentil",
+            "scientific_name": "Lens culinaris",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.10,
+                "end": 0.30
+            },
+            "max_height_m": 0.5
+        },
+        "peas_fresh": {
+            "name": "Peas (Fresh)",
+            "scientific_name": "Pisum sativum",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.15,
+                "end": 1.10
+            },
+            "max_height_m": 0.5,
+            "notes": "Footnote 2: When grown on stalks reaching 1.5-2 m height, increase Kc_mid to 1.20."
+        },
+        "peas_dry_seed": {
+            "name": "Peas (Dry/Seed)",
+            "scientific_name": "Pisum sativum",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.15,
+                "end": 0.30
+            },
+            "max_height_m": 0.5
+        },
+        "soybeans": {
+            "name": "Soybeans",
+            "scientific_name": "Glycine max",
+            "category": "e_legumes",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.15,
+                "end": 0.50
+            },
+            "max_height_m": {
+                "low": 0.5,
+                "high": 1.0
+            }
+        },
+        "artichokes": {
+            "name": "Artichokes",
+            "scientific_name": "Cynara cardunculus var. scolymus",
+            "category": "f_perennial_vegetables",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.00,
+                "end": 0.95
+            },
+            "max_height_m": 0.7
+        },
+        "asparagus": {
+            "name": "Asparagus",
+            "scientific_name": "Asparagus officinalis",
+            "category": "f_perennial_vegetables",
+            "kc": {
+                "ini": 0.50,
+                "mid": 0.95,
+                "end": 0.30
+            },
+            "max_height_m": {
+                "low": 0.2,
+                "high": 0.8
+            },
+            "notes": "Footnote 7: Kc usually remains at Kc_ini during harvest of the spears (sparse ground cover). Kc_mid value is for following regrowth after harvest termination."
+        },
+        "mint": {
+            "name": "Mint",
+            "scientific_name": "Mentha spp.",
+            "category": "f_perennial_vegetables",
+            "kc": {
+                "ini": 0.60,
+                "mid": 1.15,
+                "end": 1.10
+            },
+            "max_height_m": {
+                "low": 0.6,
+                "high": 0.8
+            }
+        },
+        "strawberries": {
+            "name": "Strawberries",
+            "scientific_name": "Fragaria x ananassa",
+            "category": "f_perennial_vegetables",
+            "kc": {
+                "ini": 0.40,
+                "mid": 0.85,
+                "end": 0.75
+            },
+            "max_height_m": 0.2
+        },
+        "cotton": {
+            "name": "Cotton",
+            "scientific_name": "Gossypium spp.",
+            "category": "g_fibre_crops",
+            "kc": {
+                "ini": 0.35,
+                "mid": {
+                    "low": 1.15,
+                    "high": 1.20
+                },
+                "end": {
+                    "low": 0.50,
+                    "high": 0.70
+                }
+            },
+            "max_height_m": {
+                "low": 1.2,
+                "high": 1.5
+            }
+        },
+        "flax": {
+            "name": "Flax",
+            "scientific_name": "Linum usitatissimum",
+            "category": "g_fibre_crops",
+            "kc": {
+                "ini": 0.35,
+                "mid": 1.10,
+                "end": 0.25
+            },
+            "max_height_m": 1.2
+        },
+        "sisal": {
+            "name": "Sisal",
+            "scientific_name": "Agave sisalana",
+            "category": "g_fibre_crops",
+            "kc": {
+                "ini": 0.35,
+                "mid": {
+                    "low": 0.4,
+                    "high": 0.7
+                },
+                "end": {
+                    "low": 0.4,
+                    "high": 0.7
+                }
+            },
+            "max_height_m": 1.5,
+            "notes": "Footnote 8: Kc for sisal depends on planting density and water management (e.g., intentional moisture stress)."
+        },
+        "castorbean_ricinus": {
+            "name": "Castorbean (Ricinus)",
+            "scientific_name": "Ricinus communis",
+            "category": "h_oil_crops",
+            "kc": {
+                "ini": 0.35,
+                "mid": 1.15,
+                "end": 0.55
+            },
+            "max_height_m": 0.3
+        },
+        "rapeseed_canola": {
+            "name": "Rapeseed, Canola",
+            "scientific_name": "Brassica napus",
+            "category": "h_oil_crops",
+            "kc": {
+                "ini": 0.35,
+                "mid": {
+                    "low": 1.0,
+                    "high": 1.15
+                },
+                "end": 0.35
+            },
+            "max_height_m": 0.6,
+            "notes": "Footnote 9: Lower Kc_mid values are for rainfed crops with less dense plant populations."
+        },
+        "safflower": {
+            "name": "Safflower",
+            "scientific_name": "Carthamus tinctorius",
+            "category": "h_oil_crops",
+            "kc": {
+                "ini": 0.35,
+                "mid": {
+                    "low": 1.0,
+                    "high": 1.15
+                },
+                "end": 0.25
+            },
+            "max_height_m": 0.8,
+            "notes": "Footnote 9: Lower Kc_mid values are for rainfed crops with less dense plant populations."
+        },
+        "sesame": {
+            "name": "Sesame",
+            "scientific_name": "Sesamum indicum",
+            "category": "h_oil_crops",
+            "kc": {
+                "ini": 0.35,
+                "mid": 1.10,
+                "end": 0.25
+            },
+            "max_height_m": 1.0
+        },
+        "sunflower": {
+            "name": "Sunflower",
+            "scientific_name": "Helianthus annuus",
+            "category": "h_oil_crops",
+            "kc": {
+                "ini": 0.35,
+                "mid": {
+                    "low": 1.0,
+                    "high": 1.15
+                },
+                "end": 0.35
+            },
+            "max_height_m": 2.0,
+            "notes": "Footnote 9: Lower Kc_mid values are for rainfed crops with less dense plant populations."
+        },
+        "barley": {
+            "name": "Barley",
+            "scientific_name": "Hordeum vulgare",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.15,
+                "end": 0.25
+            },
+            "max_height_m": 1.0
+        },
+        "oats": {
+            "name": "Oats",
+            "scientific_name": "Avena sativa",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.15,
+                "end": 0.25
+            },
+            "max_height_m": 1.0
+        },
+        "spring_wheat": {
+            "name": "Spring Wheat",
+            "scientific_name": "Triticum aestivum",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.15,
+                "end": {
+                    "low": 0.25,
+                    "high": 0.40
+                }
+            },
+            "max_height_m": 1.0,
+            "notes": "Footnote 10: Higher Kc_end value is for hand-harvested crops."
+        },
+        "winter_wheat_frozen_soils": {
+            "name": "Winter Wheat (with frozen soils)",
+            "scientific_name": "Triticum aestivum",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.15,
+                "end": {
+                    "low": 0.25,
+                    "high": 0.40
+                }
+            },
+            "max_height_m": 1.0,
+            "notes": "Footnote 10: Higher Kc_end value is for hand-harvested crops."
+        },
+        "winter_wheat_non_frozen_soils": {
+            "name": "Winter Wheat (with non-frozen soils)",
+            "scientific_name": "Triticum aestivum",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.70,
+                "mid": 1.15,
+                "end": {
+                    "low": 0.25,
+                    "high": 0.40
+                }
+            },
+            "max_height_m": 1.0,
+            "notes": "Footnote 10: Higher Kc_end value is for hand-harvested crops."
+        },
+        "maize_field_grain": {
+            "name": "Maize, Field (grain) / Field corn",
+            "scientific_name": "Zea mays",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.20,
+                "end": {
+                    "low": 0.35,
+                    "high": 0.60
+                }
+            },
+            "max_height_m": 2.0,
+            "notes": "Footnote 11: Kc_end of 0.60 is for harvest at high grain moisture; 0.35 is for harvest after complete field drying (~18% moisture, wet mass basis)."
+        },
+        "maize_sweet": {
+            "name": "Maize, Sweet (sweet corn)",
+            "scientific_name": "Zea mays var. saccharata",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.15,
+                "end": 1.05
+            },
+            "max_height_m": 1.5,
+            "notes": "Footnote 12: Kc_end of 1.05 applies if harvested fresh for human consumption. Use Kc_end for field maize if sweet maize is allowed to mature and dry in the field."
+        },
+        "millet": {
+            "name": "Millet",
+            "scientific_name": "Pennisetum glaucum",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.00,
+                "end": 0.30
+            },
+            "max_height_m": 1.5
+        },
+        "sorghum_grain": {
+            "name": "Sorghum (grain)",
+            "scientific_name": "Sorghum bicolor",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.30,
+                "mid": {
+                    "low": 1.00,
+                    "high": 1.10
+                },
+                "end": 0.55
+            },
+            "max_height_m": {
+                "low": 1.0,
+                "high": 2.0
+            }
+        },
+        "sorghum_sweet": {
+            "name": "Sorghum (sweet)",
+            "scientific_name": "Sorghum bicolor",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.20,
+                "end": 1.05
+            },
+            "max_height_m": {
+                "low": 2.0,
+                "high": 4.0
+            }
+        },
+        "rice": {
+            "name": "Rice",
+            "scientific_name": "Oryza sativa",
+            "category": "i_cereals",
+            "kc": {
+                "ini": 1.05,
+                "mid": 1.20,
+                "end": {
+                    "low": 0.60,
+                    "high": 0.90
+                }
+            },
+            "max_height_m": 1.0
+        },
+        "alfalfa_hay_averaged": {
+            "name": "Alfalfa Hay (averaged cutting effects)",
+            "scientific_name": "Medicago sativa",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.40,
+                "mid": 0.95,
+                "end": 0.90
+            },
+            "max_height_m": 0.7,
+            "notes": "Footnote 13: Kc_mid is an overall average that averages Kc for both before and following cuttings. Applied from after first development period until before the last late-season period."
+        },
+        "alfalfa_hay_individual_cutting": {
+            "name": "Alfalfa Hay (individual cutting periods)",
+            "scientific_name": "Medicago sativa",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.20,
+                "end": 1.15
+            },
+            "max_height_m": 0.7,
+            "notes": "Footnote 14: Values represent immediately following cutting (Kc_ini), at full cover (Kc_mid), and immediately before cutting (Kc_end). Growing season is described as a series of cutting periods."
+        },
+        "alfalfa_seed": {
+            "name": "Alfalfa (for seed)",
+            "scientific_name": "Medicago sativa",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.40,
+                "mid": 0.50,
+                "end": 0.50
+            },
+            "max_height_m": 0.7
+        },
+        "bermuda_hay_averaged": {
+            "name": "Bermuda hay (averaged cutting effects)",
+            "scientific_name": "Cynodon dactylon",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.55,
+                "mid": 1.00,
+                "end": 0.85
+            },
+            "max_height_m": 0.35,
+            "notes": "Footnote 13: Kc_mid is an overall average across cuttings."
+        },
+        "bermuda_hay_spring_seed": {
+            "name": "Bermuda hay (Spring crop for seed)",
+            "scientific_name": "Cynodon dactylon",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.35,
+                "mid": 0.90,
+                "end": 0.65
+            },
+            "max_height_m": 0.4
+        },
+        "clover_hay_berseem_averaged": {
+            "name": "Clover hay, Berseem (averaged cutting effects)",
+            "scientific_name": "Trifolium alexandrinum",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.40,
+                "mid": 0.90,
+                "end": 0.85
+            },
+            "max_height_m": 0.6,
+            "notes": "Footnote 13: Kc_mid is an overall average across cuttings."
+        },
+        "clover_hay_berseem_individual_cutting": {
+            "name": "Clover hay, Berseem (individual cutting periods)",
+            "scientific_name": "Trifolium alexandrinum",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.15,
+                "end": 1.10
+            },
+            "max_height_m": 0.6,
+            "notes": "Footnote 14: Values for immediately after cutting / full cover / before cutting respectively."
+        },
+        "rye_grass_hay_averaged": {
+            "name": "Rye Grass hay (averaged cutting effects)",
+            "scientific_name": "Lolium spp.",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.95,
+                "mid": 1.05,
+                "end": 1.00
+            },
+            "max_height_m": 0.3
+        },
+        "sudan_grass_hay_averaged": {
+            "name": "Sudan Grass hay (annual, averaged cutting effects)",
+            "scientific_name": "Sorghum sudanense",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.50,
+                "mid": 0.90,
+                "end": 0.85
+            },
+            "max_height_m": 1.2,
+            "notes": "Footnote 14: Average Kc across cutting cycles."
+        },
+        "sudan_grass_hay_individual_cutting": {
+            "name": "Sudan Grass hay (individual cutting periods)",
+            "scientific_name": "Sorghum sudanense",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.15,
+                "end": 1.10
+            },
+            "max_height_m": 1.2,
+            "notes": "Footnote 14: Values for immediately after cutting / full cover / before cutting respectively."
+        },
+        "grazing_pasture_rotated": {
+            "name": "Grazing Pasture (Rotated Grazing)",
+            "scientific_name": "mixed grasses",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.40,
+                "mid": {
+                    "low": 0.85,
+                    "high": 1.05
+                },
+                "end": 0.85
+            },
+            "max_height_m": {
+                "low": 0.15,
+                "high": 0.30
+            }
+        },
+        "grazing_pasture_extensive": {
+            "name": "Grazing Pasture (Extensive Grazing)",
+            "scientific_name": "mixed grasses",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.30,
+                "mid": 0.75,
+                "end": 0.75
+            },
+            "max_height_m": 0.10
+        },
+        "turf_grass_cool_season": {
+            "name": "Turf grass (cool season)",
+            "scientific_name": "Poa pratensis / Lolium spp. / Festuca spp.",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.90,
+                "mid": 0.95,
+                "end": 0.95
+            },
+            "max_height_m": 0.10,
+            "notes": "Footnote 15: Cool season varieties include bluegrass, ryegrass, fescue. The 0.95 represents 6-8 cm mowing height under general turf conditions; reduce by 0.10 with careful water management and slower growth tolerance."
+        },
+        "turf_grass_warm_season": {
+            "name": "Turf grass (warm season)",
+            "scientific_name": "Cynodon dactylon / Stenotaphrum secundatum",
+            "category": "j_forages",
+            "kc": {
+                "ini": 0.80,
+                "mid": 0.85,
+                "end": 0.85
+            },
+            "max_height_m": 0.10,
+            "notes": "Footnote 15: Warm season varieties include bermuda grass and St. Augustine grass."
+        },
+        "sugar_cane": {
+            "name": "Sugar Cane",
+            "scientific_name": "Saccharum officinarum",
+            "category": "k_sugar_cane",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.25,
+                "end": 0.75
+            },
+            "max_height_m": 3.0
+        },
+        "banana_1st_year": {
+            "name": "Banana (1st year)",
+            "scientific_name": "Musa spp.",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.10,
+                "end": 1.00
+            },
+            "max_height_m": 3.0
+        },
+        "banana_2nd_year": {
+            "name": "Banana (2nd year)",
+            "scientific_name": "Musa spp.",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 1.00,
+                "mid": 1.20,
+                "end": 1.10
+            },
+            "max_height_m": 4.0
+        },
+        "cacao": {
+            "name": "Cacao",
+            "scientific_name": "Theobroma cacao",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 1.00,
+                "mid": 1.05,
+                "end": 1.05
+            },
+            "max_height_m": 3.0
+        },
+        "coffee_bare_ground_cover": {
+            "name": "Coffee (bare ground cover)",
+            "scientific_name": "Coffea spp.",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 0.90,
+                "mid": 0.95,
+                "end": 0.95
+            },
+            "max_height_m": {
+                "low": 2.0,
+                "high": 3.0
+            }
+        },
+        "coffee_with_weeds": {
+            "name": "Coffee (with weeds)",
+            "scientific_name": "Coffea spp.",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 1.05,
+                "mid": 1.10,
+                "end": 1.10
+            },
+            "max_height_m": {
+                "low": 2.0,
+                "high": 3.0
+            }
+        },
+        "date_palms": {
+            "name": "Date Palms",
+            "scientific_name": "Phoenix dactylifera",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 0.90,
+                "mid": 0.95,
+                "end": 0.95
+            },
+            "max_height_m": 8.0
+        },
+        "palm_trees": {
+            "name": "Palm Trees",
+            "scientific_name": "Arecaceae spp.",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 0.95,
+                "mid": 1.00,
+                "end": 1.00
+            },
+            "max_height_m": 8.0
+        },
+        "pineapple_bare_soil": {
+            "name": "Pineapple (bare soil)",
+            "scientific_name": "Ananas comosus",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 0.50,
+                "mid": 0.30,
+                "end": 0.30
+            },
+            "max_height_m": {
+                "low": 0.6,
+                "high": 1.2
+            },
+            "notes": "Footnote 16: Pineapple has very low transpiration (CAM stomatal closure during the day). Most ETc is soil evaporation. Values assume 50% black plastic mulch and sprinkler irrigation. For drip beneath plastic mulch, reduce Kc by 0.10."
+        },
+        "pineapple_with_grass_cover": {
+            "name": "Pineapple (with grass cover)",
+            "scientific_name": "Ananas comosus",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 0.50,
+                "mid": 0.50,
+                "end": 0.50
+            },
+            "max_height_m": {
+                "low": 0.6,
+                "high": 1.2
+            },
+            "notes": "Footnote 16: See pineapple_bare_soil for context on CAM physiology and management assumptions."
+        },
+        "rubber_trees": {
+            "name": "Rubber Trees",
+            "scientific_name": "Hevea brasiliensis",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 0.95,
+                "mid": 1.00,
+                "end": 1.00
+            },
+            "max_height_m": 10.0
+        },
+        "tea_non_shaded": {
+            "name": "Tea (non-shaded)",
+            "scientific_name": "Camellia sinensis",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 0.95,
+                "mid": 1.00,
+                "end": 1.00
+            },
+            "max_height_m": 1.5
+        },
+        "tea_shaded": {
+            "name": "Tea (shaded)",
+            "scientific_name": "Camellia sinensis",
+            "category": "l_tropical_fruits_trees",
+            "kc": {
+                "ini": 1.10,
+                "mid": 1.15,
+                "end": 1.15
+            },
+            "max_height_m": 2.0,
+            "notes": "Footnote 17: Includes the water requirements of the shade trees."
+        },
+        "berries_bushes": {
+            "name": "Berries (bushes)",
+            "scientific_name": "Rubus / Ribes / Vaccinium spp.",
+            "category": "m_grapes_berries",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.05,
+                "end": 0.50
+            },
+            "max_height_m": 1.5
+        },
+        "grapes_table_raisin": {
+            "name": "Grapes (Table or Raisin)",
+            "scientific_name": "Vitis vinifera",
+            "category": "m_grapes_berries",
+            "kc": {
+                "ini": 0.30,
+                "mid": 0.85,
+                "end": 0.45
+            },
+            "max_height_m": 2.0
+        },
+        "grapes_wine": {
+            "name": "Grapes (Wine)",
+            "scientific_name": "Vitis vinifera",
+            "category": "m_grapes_berries",
+            "kc": {
+                "ini": 0.30,
+                "mid": 0.70,
+                "end": 0.45
+            },
+            "max_height_m": {
+                "low": 1.5,
+                "high": 2.0
+            }
+        },
+        "hops": {
+            "name": "Hops",
+            "scientific_name": "Humulus lupulus",
+            "category": "m_grapes_berries",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.05,
+                "end": 0.85
+            },
+            "max_height_m": 5.0
+        },
+        "almonds_no_ground_cover": {
+            "name": "Almonds (no ground cover)",
+            "scientific_name": "Prunus dulcis",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.40,
+                "mid": 0.90,
+                "end": 0.65
+            },
+            "max_height_m": 5.0,
+            "notes": "Footnote 18: Kc_end represents Kc prior to leaf drop. After leaf drop, Kc_end ~0.20 for bare/dry soil or dead ground cover, and 0.50-0.80 for actively growing ground cover (Chapter 11)."
+        },
+        "apples_cherries_pears_no_cover_killing_frost": {
+            "name": "Apples, Cherries, Pears (no ground cover, killing frost)",
+            "scientific_name": "Malus domestica / Prunus avium / Pyrus communis",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.45,
+                "mid": 0.95,
+                "end": 0.70
+            },
+            "max_height_m": 4.0,
+            "notes": "Footnote 18: Kc_end is prior to leaf drop. Footnote 19: Refer to FAO-56 Eq. 94, 97 or 98 for immature stands."
+        },
+        "apples_cherries_pears_no_cover_no_frost": {
+            "name": "Apples, Cherries, Pears (no ground cover, no frosts)",
+            "scientific_name": "Malus domestica / Prunus avium / Pyrus communis",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.60,
+                "mid": 0.95,
+                "end": 0.75
+            },
+            "max_height_m": 4.0,
+            "notes": "Footnote 18: Kc_end is prior to leaf drop."
+        },
+        "apples_cherries_pears_active_cover_killing_frost": {
+            "name": "Apples, Cherries, Pears (active ground cover, killing frost)",
+            "scientific_name": "Malus domestica / Prunus avium / Pyrus communis",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.20,
+                "end": 0.95
+            },
+            "max_height_m": 4.0,
+            "notes": "Footnote 18: Kc_end is prior to leaf drop."
+        },
+        "apples_cherries_pears_active_cover_no_frost": {
+            "name": "Apples, Cherries, Pears (active ground cover, no frosts)",
+            "scientific_name": "Malus domestica / Prunus avium / Pyrus communis",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.80,
+                "mid": 1.20,
+                "end": 0.85
+            },
+            "max_height_m": 4.0,
+            "notes": "Footnote 18: Kc_end is prior to leaf drop."
+        },
+        "apricots_peaches_stone_no_cover_killing_frost": {
+            "name": "Apricots, Peaches, Stone Fruit (no ground cover, killing frost)",
+            "scientific_name": "Prunus armeniaca / Prunus persica / Prunus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.45,
+                "mid": 0.90,
+                "end": 0.65
+            },
+            "max_height_m": 3.0,
+            "notes": "Footnotes 18, 20: Stone fruit category includes peaches, apricots, pears, plums, pecans."
+        },
+        "apricots_peaches_stone_no_cover_no_frost": {
+            "name": "Apricots, Peaches, Stone Fruit (no ground cover, no frosts)",
+            "scientific_name": "Prunus armeniaca / Prunus persica / Prunus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.55,
+                "mid": 0.90,
+                "end": 0.65
+            },
+            "max_height_m": 3.0,
+            "notes": "Footnotes 18, 20."
+        },
+        "apricots_peaches_stone_active_cover_killing_frost": {
+            "name": "Apricots, Peaches, Stone Fruit (active ground cover, killing frost)",
+            "scientific_name": "Prunus armeniaca / Prunus persica / Prunus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.15,
+                "end": 0.90
+            },
+            "max_height_m": 3.0,
+            "notes": "Footnotes 18, 20."
+        },
+        "apricots_peaches_stone_active_cover_no_frost": {
+            "name": "Apricots, Peaches, Stone Fruit (active ground cover, no frosts)",
+            "scientific_name": "Prunus armeniaca / Prunus persica / Prunus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.80,
+                "mid": 1.15,
+                "end": 0.85
+            },
+            "max_height_m": 3.0,
+            "notes": "Footnotes 18, 20."
+        },
+        "avocado_no_ground_cover": {
+            "name": "Avocado (no ground cover)",
+            "scientific_name": "Persea americana",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.60,
+                "mid": 0.85,
+                "end": 0.75
+            },
+            "max_height_m": 3.0
+        },
+        "citrus_no_cover_70_canopy": {
+            "name": "Citrus (no ground cover, 70% canopy)",
+            "scientific_name": "Citrus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.70,
+                "mid": 0.65,
+                "end": 0.70
+            },
+            "max_height_m": 4.0,
+            "notes": "Footnote 21: Compute via Eq. 98 with Kc_min=0.15 and Kc_full=0.75/0.70/0.75 for ini/mid/end. For humid/subhumid climates, increase Kc by 0.1-0.2 (Rogers et al. 1983)."
+        },
+        "citrus_no_cover_50_canopy": {
+            "name": "Citrus (no ground cover, 50% canopy)",
+            "scientific_name": "Citrus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.65,
+                "mid": 0.60,
+                "end": 0.65
+            },
+            "max_height_m": 3.0,
+            "notes": "Footnote 21."
+        },
+        "citrus_no_cover_20_canopy": {
+            "name": "Citrus (no ground cover, 20% canopy)",
+            "scientific_name": "Citrus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.50,
+                "mid": 0.45,
+                "end": 0.55
+            },
+            "max_height_m": 2.0,
+            "notes": "Footnote 21."
+        },
+        "citrus_active_cover_70_canopy": {
+            "name": "Citrus (with active ground cover or weeds, 70% canopy)",
+            "scientific_name": "Citrus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.75,
+                "mid": 0.70,
+                "end": 0.75
+            },
+            "max_height_m": 4.0,
+            "notes": "Footnote 22: Compute via Kc = fc*Kc_ngc + (1-fc)*Kc_cover. For humid/subhumid climates, increase Kc by 0.1-0.2."
+        },
+        "citrus_active_cover_50_canopy": {
+            "name": "Citrus (with active ground cover or weeds, 50% canopy)",
+            "scientific_name": "Citrus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.80,
+                "mid": 0.80,
+                "end": 0.80
+            },
+            "max_height_m": 3.0,
+            "notes": "Footnote 22."
+        },
+        "citrus_active_cover_20_canopy": {
+            "name": "Citrus (with active ground cover or weeds, 20% canopy)",
+            "scientific_name": "Citrus spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.85,
+                "mid": 0.85,
+                "end": 0.85
+            },
+            "max_height_m": 2.0,
+            "notes": "Footnote 22."
+        },
+        "conifer_trees": {
+            "name": "Conifer Trees",
+            "scientific_name": "Pinaceae / Cupressaceae spp.",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 1.00,
+                "mid": 1.00,
+                "end": 1.00
+            },
+            "max_height_m": 10.0,
+            "notes": "Footnote 23: Conifers exhibit substantial stomatal control due to reduced aerodynamic resistance. Kc can easily reduce below these values, which represent well-watered conditions for large forests."
+        },
+        "kiwi": {
+            "name": "Kiwi",
+            "scientific_name": "Actinidia deliciosa",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.05,
+                "end": 1.05
+            },
+            "max_height_m": 3.0
+        },
+        "olives": {
+            "name": "Olives (40-60% ground cover by canopy)",
+            "scientific_name": "Olea europaea",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.65,
+                "mid": 0.70,
+                "end": 0.70
+            },
+            "max_height_m": {
+                "low": 3.0,
+                "high": 5.0
+            },
+            "notes": "Footnote 24: Coefficients represent 40-60% ground cover. For Spanish 60% cover orchards (Pastor & Orgaz 1994), monthly Kc Jan-Dec: 0.50, 0.50, 0.65, 0.60, 0.55, 0.50, 0.45, 0.45, 0.55, 0.60, 0.65, 0.50."
+        },
+        "pistachios_no_ground_cover": {
+            "name": "Pistachios (no ground cover)",
+            "scientific_name": "Pistacia vera",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.40,
+                "mid": 1.10,
+                "end": 0.45
+            },
+            "max_height_m": {
+                "low": 3.0,
+                "high": 5.0
+            }
+        },
+        "walnut_orchard": {
+            "name": "Walnut Orchard",
+            "scientific_name": "Juglans regia",
+            "category": "n_fruit_trees",
+            "kc": {
+                "ini": 0.50,
+                "mid": 1.10,
+                "end": 0.65
+            },
+            "max_height_m": {
+                "low": 4.0,
+                "high": 5.0
+            },
+            "notes": "Footnote 18: Kc_end represents Kc prior to leaf drop."
+        },
+        "cattails_bulrushes_killing_frost": {
+            "name": "Cattails, Bulrushes (killing frost)",
+            "scientific_name": "Typha spp. / Schoenoplectus spp.",
+            "category": "o_wetlands_temperate",
+            "kc": {
+                "ini": 0.30,
+                "mid": 1.20,
+                "end": 0.30
+            },
+            "max_height_m": 2.0
+        },
+        "cattails_bulrushes_no_frost": {
+            "name": "Cattails, Bulrushes (no frost)",
+            "scientific_name": "Typha spp. / Schoenoplectus spp.",
+            "category": "o_wetlands_temperate",
+            "kc": {
+                "ini": 0.60,
+                "mid": 1.20,
+                "end": 0.60
+            },
+            "max_height_m": 2.0
+        },
+        "short_vegetation_no_frost": {
+            "name": "Short Vegetation (no frost)",
+            "scientific_name": "mixed wetland herbs",
+            "category": "o_wetlands_temperate",
+            "kc": {
+                "ini": 1.05,
+                "mid": 1.10,
+                "end": 1.10
+            },
+            "max_height_m": 0.3
+        },
+        "reed_swamp_standing_water": {
+            "name": "Reed Swamp (standing water)",
+            "scientific_name": "Phragmites australis",
+            "category": "o_wetlands_temperate",
+            "kc": {
+                "ini": 1.00,
+                "mid": 1.20,
+                "end": 1.00
+            },
+            "max_height_m": {
+                "low": 1.0,
+                "high": 3.0
+            }
+        },
+        "reed_swamp_moist_soil": {
+            "name": "Reed Swamp (moist soil)",
+            "scientific_name": "Phragmites australis",
+            "category": "o_wetlands_temperate",
+            "kc": {
+                "ini": 0.90,
+                "mid": 1.20,
+                "end": 0.70
+            },
+            "max_height_m": {
+                "low": 1.0,
+                "high": 3.0
+            }
+        },
+        "open_water_shallow_subhumid_or_tropical": {
+            "name": "Open Water (< 2 m depth, or in subhumid climates / tropics)",
+            "category": "p_special",
+            "kc": {
+                "ini": null,
+                "mid": 1.05,
+                "end": 1.05
+            },
+            "max_height_m": null
+        },
+        "open_water_deep_temperate": {
+            "name": "Open Water (> 5 m depth, clear, temperate climate)",
+            "category": "p_special",
+            "kc": {
+                "ini": null,
+                "mid": 0.65,
+                "end": 1.25
+            },
+            "max_height_m": null,
+            "notes": "Footnote 25: For deep water in temperate latitudes with large annual temperature changes. Initial/peak ET is low as radiation is absorbed into the water body. In fall/winter, heat release from the water body increases evaporation above grass values. Kc_mid corresponds to thermal energy gain phase; Kc_end to thermal energy release. Use with caution."
+        }
+    }
+}

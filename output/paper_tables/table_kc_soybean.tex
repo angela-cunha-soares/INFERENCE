@@ -1,0 +1,31 @@
+% FAO-56 Kc curve for early-cycle (90-day) soybean planted on 1 December
+% Source: Allen et al. (1998) -- FAO-56 Crop Evapotranspiration, Table 12
+%         Steduto et al. (2012) -- FAO-66 Crop Yield Response to Water
+% Effective rooting depth Z_r = 60 cm
+% Available water capacity AWC = 120 mm
+% Management allowed depletion MAD = 0.55 (FAO-56 default for soybean)
+\begin{table}[!ht]
+\centering
+\caption{FAO-56 single-crop coefficient (\(K_c\)) for early-cycle soybean
+(\textit{Glycine max} L.) planted on 1 December in MATOPIBA. Stage durations
+and \(K_c\) values follow Allen \textit{et al.} (1998) Table 12 and Steduto
+\textit{et al.} (2012) FAO-66.}
+\label{tab:kc_soybean}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Phenological stage} & \textbf{Symbol} & \textbf{Duration (days)} & \textbf{\(K_c\)} \\
+\midrule
+Initial          & \(K_{c,\text{ini}}\) & 15 & 0.40 \\
+Crop development & --                   & 15 & 0.80 \\
+Mid-season       & \(K_{c,\text{mid}}\) & 40 & 1.15 \\
+Late season      & --                   & 15 & 0.80 \\
+Harvest          & \(K_{c,\text{end}}\) &  5 & 0.50 \\
+\midrule
+\textbf{Total cycle} & -- & \textbf{90} & -- \\
+\bottomrule
+\end{tabular}
+\vspace{0.4em}\\
+\footnotesize{Effective rooting depth \(Z_r = 60\) cm, available water
+capacity AWC \(= 120\) mm, management allowed depletion MAD \(= 0.55\)
+(FAO-56 Chapter 6 / FAO-66).}
+\end{table}

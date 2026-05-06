@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "bwb -- Bayesian Water Balance framework"
+message: "If you use this software, please cite it using the metadata below."
+type: software
+version: "0.1.0"
+date-released: "2026-04-30"
+license: MIT
+repository-code: "https://github.com/angela-cunha-soares/INFERENCE"
+authors:
+  - family-names: "Cunha Soares"
+    given-names: "Angela"
+keywords:
+  - "Bayesian inference"
+  - "water balance"
+  - "FAO-56"
+  - "irrigation scheduling"
+  - "soybean"
+  - "MATOPIBA"
+  - "PyMC"
+abstract: >-
+  bwb is a hierarchical Bayesian framework for stochastic water-balance
+  modelling and risk-aware irrigation scheduling. It couples the FAO-56
+  single-crop-coefficient process equation with a state-space Bayesian
+  observation model in PyMC v5, and propagates parametric and meteorological
+  uncertainty into probabilistic irrigation recommendations. The framework is
+  validated across 10 cities of the MATOPIBA agricultural frontier in Brazil
+  (Maranhao, Tocantins, Piaui, Bahia) for 5 soybean cycles (2020-2025).

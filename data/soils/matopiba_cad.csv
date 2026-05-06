@@ -1,0 +1,11 @@
+ibge_code,city,municipio_snirh,uf,cad_m3_m3,root_depth_cm,awc_mm_60cm,awc_mm_100cm,source
+2201150,Baixa_Grande_do_Ribeiro,Baixa Grande do Ribeiro,PI,0.077245,60,46.35,77.25,SNIRH/ANA dataset 28fe4baa
+2101400,Balsas,Balsas,MA,0.083690,60,50.21,83.69,SNIRH/ANA dataset 28fe4baa
+2903201,Barreiras,Barreiras,BA,0.081427,60,48.86,81.43,SNIRH/ANA dataset 28fe4baa
+2201903,Bom_Jesus,Bom Jesus,PI,0.057284,60,34.37,57.28,SNIRH/ANA dataset 28fe4baa
+1703842,Campos_Lindos,Campos Lindos,TO,0.060833,60,36.50,60.83,SNIRH/ANA dataset 28fe4baa
+2909307,Correntina,Correntina,BA,0.077653,60,46.59,77.65,SNIRH/ANA dataset 28fe4baa
+2911105,Formosa_do_Rio_Preto,Formosa do Rio Preto,BA,0.102086,60,61.25,102.09,SNIRH/ANA dataset 28fe4baa
+2919553,Luis_Eduardo_Magalhaes,Luis Eduardo Magalhaes,BA,0.088114,60,52.87,88.11,SNIRH/ANA dataset 28fe4baa
+2112001,Tasso_Fragoso,Tasso Fragoso,MA,0.088830,60,53.30,88.83,SNIRH/ANA dataset 28fe4baa
+2211209,Urucui,Urucui,PI,0.068936,60,41.36,68.94,SNIRH/ANA dataset 28fe4baa

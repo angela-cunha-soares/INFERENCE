@@ -1,0 +1,2 @@
+city,soil_depth_cm,crop_cycle,season,status,diag_max_rhat,diag_min_ess_bulk,diag_min_ess_tail,diag_n_divergent,diag_converged,metric_rmse,metric_mae,metric_bias,metric_pbias,metric_kge,metric_nse,metric_crps_mean,metric_pit_alpha,metric_coverage_90,metric_interval_score_90
+Balsas,60,2023,2023/2024,ok,1.01,383.0,231.0,0,False,0.007869573396843892,0.006243618360168059,1.6522034306091597e-05,0.005512209089062407,0.8795530074428952,0.9715857771724576,0.004489025163116904,0.9151684981684981,0.9,0.03252549626758483

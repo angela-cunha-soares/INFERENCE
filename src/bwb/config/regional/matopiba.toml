@@ -1,0 +1,181 @@
+# MATOPIBA regional profile
+#
+# Used by bwb.config.profiles.load_profile("matopiba"). All values are sourced
+# from the manuscript's data tables and FAO-56 references; tweak per study.
+
+name = "matopiba"
+description = "MATOPIBA agricultural frontier (MA, TO, PI, BA) — soybean focus"
+country = "Brazil"
+timezone = "America/Bahia"
+
+[crop]
+name = "soybean"
+variety = "early_90d_step"  # 90-day cycle, 5-stage step Kc (Embrapa/advisor convention)
+planting_month = 12         # December
+planting_day = 1
+cycle_days = 90
+root_depth_cm = 60
+mad = 0.55                  # FAO-56 management allowed depletion for soybean
+# AWC is now per-city, see [soils.<city>] blocks below.
+# The legacy uniform value (120 mm) is kept as a fallback for backwards
+# compatibility with profile loaders that haven't been migrated yet.
+awc_mm = 120
+
+# 5-stage step Kc curve following advisor specification (FAO-56 Chapter 6,
+# Allen et al. 1998; FAO-66, Steduto et al. 2012). Each phase is a constant
+# Kc value; this is the simplified time-averaged form used by Embrapa Soja
+# and adopted in Brazilian agronomy literature.
+#
+#   Stage         Days   Kc
+#   initial        15    0.40
+#   development    15    0.80
+#   mid-season     40    1.15
+#   late-season    15    0.80
+#   harvest         5    0.50
+#
+# Total = 90 days; mean Kc ≈ 0.87
+kc_ini     = 0.40           # initial / emergence
+kc_dev     = 0.80           # development / canopy expansion
+kc_mid     = 1.15           # mid-season / flowering-grain fill
+kc_late    = 0.80           # late-season / maturation
+kc_harvest = 0.50           # harvest / senescence
+L_ini      = 15
+L_dev      = 15
+L_mid      = 40
+L_late     = 15             # was 20 (split into late=15 + harvest=5)
+L_harvest  = 5
+
+# FAO-56 Table 12 single Kc values (kept for backwards-compatible 4-stage
+# linear curve callers). End-of-late equals harvest Kc.
+kc_end = 0.50
+
+[soil]
+# Reference profile parameters used by the Bayesian θ model (PyMC) when the
+# CAD-derived AWC is not enough — eg for posterior recovery of θ trajectories.
+# Values from Latossolo Vermelho fase arenosa, série Sertãozinho (representative
+# of MATOPIBA Latossolos arenosos).
+type = "latossolo_vermelho_arenoso"
+theta_s = 0.421             # 0-20 cm horizon, van Genuchten
+theta_r = 0.098
+default_depth_cm = 60
+
+# van Genuchten profile (1980), 3 depths × {theta_s, theta_r, alpha [kPa-1], m, n}
+# Reference: Latossolo Vermelho, fase arenosa, série Sertãozinho. Used as
+# representative of MATOPIBA latosols in absence of site-specific HYBRAS data.
+[soil.van_genuchten.depth_0_20]
+theta_s = 0.421
+theta_r = 0.098
+alpha   = 1.3464
+m       = 0.18
+n       = 2.718
+
+[soil.van_genuchten.depth_20_40]
+theta_s = 0.412
+theta_r = 0.085
+alpha   = 1.5708
+m       = 0.165
+n       = 2.503
+
+[soil.van_genuchten.depth_40_60]
+theta_s = 0.374
+theta_r = 0.122
+alpha   = 1.1291
+m       = 0.275
+n       = 1.562
+
+# Per-city Available Water Capacity (AWC) derived from SNIRH/ANA-UFPR dataset
+# (Santos et al. TED ANA-UFPR; SNIRH record 28fe4baa-66f3-4f6b-b0d2-890abf5910c4).
+# CAD is the volumetric AWC (m^3/m^3) for the 0-120 cm reference profile;
+# AWC_mm = CAD * Z_r(60cm) * 10 for our 90-day soybean root zone.
+# Source CSV: data/soils/matopiba_cad.csv
+[soils.Baixa_Grande_do_Ribeiro]
+ibge_code = 2201150
+cad_m3_m3 = 0.077245
+awc_mm    = 46.35
+
+[soils.Balsas]
+ibge_code = 2101400
+cad_m3_m3 = 0.083690
+awc_mm    = 50.21
+
+[soils.Barreiras]
+ibge_code = 2903201
+cad_m3_m3 = 0.081427
+awc_mm    = 48.86
+
+[soils.Bom_Jesus]
+ibge_code = 2201903
+cad_m3_m3 = 0.057284
+awc_mm    = 34.37
+
+[soils.Campos_Lindos]
+ibge_code = 1703842
+cad_m3_m3 = 0.060833
+awc_mm    = 36.50
+
+[soils.Correntina]
+ibge_code = 2909307
+cad_m3_m3 = 0.077653
+awc_mm    = 46.59
+
+[soils.Formosa_do_Rio_Preto]
+ibge_code = 2911105
+cad_m3_m3 = 0.102086
+awc_mm    = 61.25
+
+[soils.Luis_Eduardo_Magalhaes]
+ibge_code = 2919553
+cad_m3_m3 = 0.088114
+awc_mm    = 52.87
+
+[soils.Tasso_Fragoso]
+ibge_code = 2112001
+cad_m3_m3 = 0.088830
+awc_mm    = 53.30
+
+[soils.Urucui]
+ibge_code = 2211209
+cad_m3_m3 = 0.068936
+awc_mm    = 41.36
+
+[bayesian]
+draws = 2000
+tune = 1000
+chains = 4
+target_accept = 0.95
+
+# Observation noise upper bound (HalfNormal sigma).
+# Widened from 0.05 -> 0.10 (2026-05) after coverage_90 ~ 0.19
+sigma_obs_max = 0.10
+
+# Prior widths on the four key parameters. Tuned from Sobol' sensitivity:
+# theta_s and theta_init dominate the variance, so they are slightly relaxed.
+sigma_theta_s    = 0.04
+sigma_theta_r    = 0.02
+sigma_kc_mult    = 0.08
+sigma_theta_init = 0.06
+
+[decision]
+theta_crit_offset = 0.02    # theta_crit = theta_r + offset
+tau_risk = 0.05             # P(deficit) threshold for irrigation flag
+n_max = 50                  # consecutive-stress days for collapse signal
+epsilon_collapse = 1.0
+
+[cities]
+# (lat, lon) of the 10 MATOPIBA cities used by the validation grid
+Baixa_Grande_do_Ribeiro = [-9.85, -45.30]
+Balsas                  = [-9.55, -44.05]
+Barreiras               = [-12.15, -44.99]
+Bom_Jesus               = [-9.75, -44.35]
+Campos_Lindos           = [-9.95, -44.45]
+Correntina              = [-13.35, -44.45]
+Formosa_do_Rio_Preto    = [-11.55, -45.15]
+Luis_Eduardo_Magalhaes  = [-12.05, -45.75]
+Tasso_Fragoso           = [-9.35, -44.25]
+Urucui                  = [-7.25, -45.25]
+
+[validation]
+soil_depths_cm = [40, 60, 80]
+crop_cycles = [2020, 2021, 2022, 2023, 2024]
+n_samples = 2000
+n_simulations = 500

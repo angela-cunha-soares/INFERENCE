@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/Scripts/python -c \"from bwb.validation import compute_all_metrics, kge, rmse, crps_mean, ValidationConfig, SensitivityConfig; import numpy as np; sim=np.array\\([1.0,2,3,4,5]\\); obs=np.array\\([1.1,2.2,2.8,4.1,4.9]\\); fs=np.random.randn\\(5,100\\)+sim[:,None]; print\\('KGE=', round\\(kge\\(sim,obs\\),3\\)\\); print\\('RMSE=', round\\(rmse\\(sim,obs\\),3\\)\\); print\\('CRPS=', round\\(crps_mean\\(fs,obs\\),3\\)\\); print\\('all=', {k: round\\(v,3\\) if isinstance\\(v,float\\) else v for k,v in compute_all_metrics\\(sim,obs,fs\\).items\\(\\)}\\)\")",
+      "Bash(.venv/Scripts/python -c \"import sys; sys.path.insert\\(0,'src'\\); from bwb.validation import compute_all_metrics, kge, rmse, crps_mean, ValidationConfig, SensitivityConfig; import numpy as np; sim=np.array\\([1.0,2,3,4,5]\\); obs=np.array\\([1.1,2.2,2.8,4.1,4.9]\\); fs=np.random.randn\\(5,100\\)+sim[:,None]; print\\('KGE=', round\\(kge\\(sim,obs\\),3\\)\\); print\\('RMSE=', round\\(rmse\\(sim,obs\\),3\\)\\); print\\('CRPS=', round\\(crps_mean\\(fs,obs\\),3\\)\\); print\\('all=', {k: round\\(v,3\\) if isinstance\\(v,float\\) else v for k,v in compute_all_metrics\\(sim,obs,fs\\).items\\(\\)}\\)\")",
+      "Bash(.venv/Scripts/python -m pip install -e . --quiet)",
+      "Bash(.venv/Scripts/python -c \"import bwb; from bwb.validation import compute_all_metrics, kge; print\\('OK', bwb.__version__\\)\")",
+      "Bash(.venv/Scripts/python -c \"import bwb.validation, bwb.config; print\\('config OK'\\)\")",
+      "Bash(.venv/Scripts/python -c \"from bwb.config.settings import get_settings; from bwb.config.profiles import load_profile, list_profiles; s = get_settings\\(\\); print\\('region=', s.region, 'draws=', s.draws, 'project_root=', s.project_root\\); profile = load_profile\\('matopiba'\\); print\\('Available profiles:', list_profiles\\(\\)\\); print\\('Crop AWC:', profile['crop']['awc_mm'], 'Cities:', list\\(profile['cities'].keys\\(\\)\\)[:3]\\)\")",
+      "Bash(.venv/Scripts/python -m pytest tests/ -v)",
+      "Bash(.venv/Scripts/python -m bwb.cli forecast-sequential --n-sim 500)",
+      "Bash(.venv/Scripts/python -c ' *)",
+      "Bash(.venv/Scripts/python -m bwb.cli forecast-sequential --cities Balsas Barreiras --cycles 2023 2024 --n-sim 200)",
+      "Bash(python scripts/compare_bayes_vs_xavier.py)",
+      "Bash(python scripts/download_atlantic_indices.py)",
+      "Bash(python -c \"import rasterio, requests, owslib\")",
+      "Bash(python -c \"import requests; print\\('requests ok'\\)\")",
+      "Bash(python -c \"import urllib.request, struct; print\\('stdlib ok'\\)\")",
+      "Bash(python scripts/download_atlantic_indices.py --skip-existing)",
+      "Bash(python -c ' *)",
+      "Bash(python scripts/generate_paper_methods_tables.py)"
+    ]
+  }
+}

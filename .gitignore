@@ -23,7 +23,10 @@ Desktop.ini
 
 # Output files (regeneráveis pelo modelo)
 output/*.nc
-output/*.png
+
+# Heavy raw data (manage out-of-band)
+data_raw/xavier/
+data_raw/soil_moisture/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -32,6 +35,18 @@ output/*.png
 *.egg-info/
 dist/
 build/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Temp directory used during refactoring
+temp/
+
+# Misc
+*.log
 
 # Misc
 *.log

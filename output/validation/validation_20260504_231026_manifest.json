@@ -1,0 +1,7 @@
+{
+  "csv": "output\\validation\\validation_20260504_231026.csv",
+  "parquet": "output\\validation\\validation_20260504_231026.parquet",
+  "n_combinations": 1,
+  "n_ok": 1,
+  "timestamp": "20260504_231026"
+}
