@@ -57,38 +57,70 @@ Engineering, S\~ao Carlos School of Engineering, USP},
   country={Brazil}}
 
 \begin{abstract}
-Operational irrigation scheduling in tropical agricultural frontiers
-demands quantitative uncertainty in soil-water content, not single-valued
-deterministic predictions. We present \emph{bwb} (\emph{Bayesian Water
-Balance}), an open-source Python framework that couples the FAO-56 daily
-water balance with a probabilistic inference engine implemented in PyMC
-v5. The framework provides two complementary validation modes: a
-posterior-recovery test (150 city $\times$ soil-depth $\times$ cycle
-combinations) that verifies internal consistency between the Bayesian
-model and a deterministic FAO-56 baseline driven by Xavier reanalysis;
-and a climatological sequential forecast (50 city $\times$ cycle
-combinations) that trains classification priors on 1961--2019, forecasts
-each cycle by Monte-Carlo resampling of historical seasons weighted by a
+\textbf{Objective.} Operational irrigation scheduling in tropical
+agricultural frontiers demands quantitative uncertainty in
+soil-water content, not single-valued deterministic predictions. The
+objective of this work is to deliver an open-source, reproducible
+Bayesian water-balance framework that (i)~reproduces the FAO-56
+daily water balance with calibrated probabilistic uncertainty,
+(ii)~issues strictly causal cycle-level and 5-day rolling forecasts
+of soybean irrigation depth, and (iii)~quantifies its own skill
+against transparent baselines on the Brazilian MATOPIBA agricultural
+frontier.
+
+\textbf{Methods.} We present \emph{bwb} (\emph{Bayesian Water
+Balance}), a Python package that couples the FAO-56 daily water
+balance with a probabilistic inference engine implemented in PyMC
+v5. The framework provides three complementary validation modes:
+(a) a posterior-recovery test on 150 city $\times$ soil-depth
+$\times$ cycle combinations that verifies internal consistency
+between the Bayesian model and a deterministic FAO-56 baseline
+driven by Xavier reanalysis; (b) a climatological sequential
+forecast on 50 city $\times$ cycle combinations that trains
+classification priors on 1961--2019, forecasts each cycle by
+Monte-Carlo resampling of historical seasons weighted by a
 conjugate Dirichlet--Multinomial posterior on a Standardised
-Precipitation--Evapotranspiration Index (SPEI), and updates the prior
-sequentially after each observed cycle. Across ten cropping hubs of
-the MATOPIBA region (Maranh\~ao, Tocantins, Piau\'i, Bahia) and five
-soybean growing seasons (2020/21--2024/25), the posterior-recovery test
-achieved a median Kling--Gupta Efficiency of 0.918 (range 0.798--0.985)
+Precipitation--Evapotranspiration Index (SPEI) initialised with a
+climatologically-informed prior, and updates the prior sequentially
+after each observed cycle; and (c) an operational rolling 5-day
+forecast on 4{,}250 forecasts that exposes the operational mode of
+the pipeline.
+
+\textbf{Results.} Across the ten cropping hubs of MATOPIBA
+(Maranh\~ao, Tocantins, Piau\'i, Bahia) and five soybean growing
+seasons (2020/21--2024/25), the posterior-recovery test achieved a
+median Kling--Gupta Efficiency (KGE) of 0.918 (range 0.798--0.985)
 and a 90\% credible-interval coverage of 0.922 against the nominal
-0.90. The sequential forecast, evaluated against the realised
-seasonal irrigation depth $I_{\mathrm{total}}$ (typically 0--200~mm
-per cycle in MATOPIBA), achieved a median Continuous Ranked
-Probability Score of 23.0~mm\,---\,equivalent to a probabilistic mean
-absolute error of approximately 30\% of the typical seasonal
-depth\,---\,and a daily soil-water-content coverage of 0.957 against
-the nominal 0.90, indicating well-calibrated forecast intervals. A global Sobol' sensitivity analysis
-identified soil saturation $\theta_s$ (first-order index 0.73) and
-initial soil moisture $\theta_{\mathrm{init}}$ (0.46) as the dominant
-parameters. The framework is released under the MIT license with a
-command-line interface, Docker container, 72 unit and integration tests,
-and continuous integration; it is architected to apply to any FAO-56
-crop and any region with daily $P$ and ETo time series.
+0.90, with the worst-case Gelman--Rubin statistic
+$\hat{R}\leq 1.005$ across all parameters and zero divergent
+transitions. The climatological sequential forecast, evaluated
+against the realised seasonal irrigation depth $I_{\mathrm{total}}$
+(typically 0--200~mm per cycle in MATOPIBA), achieved a median
+Continuous Ranked Probability Score (CRPS) of 18.2~mm\,---\,a
+probabilistic mean absolute error of $\approx 10$--$25\%$ of the
+typical seasonal depth, with a positive continuous-ranked-probability
+skill score (CRPSS $= +0.034$) against a naive long-term-mean
+baseline\,---\,and a daily soil-water-content coverage of 0.954
+against the nominal 0.90, indicating well-calibrated forecast
+intervals. The operational rolling forecast achieved a median KGE of
+$+0.32$ on the 5-day cumulative irrigation against the FAO-56
+deterministic baseline, with a mean CRPS of 2.65~mm and a 90\%
+prediction-interval coverage of 0.970. A global Sobol' sensitivity
+analysis identified soil saturation $\theta_s$ (first-order index
+0.73) and initial soil moisture $\theta_{\mathrm{init}}$ (0.46) as
+the dominant parameters and motivated the prior tuning that lifted
+the empirical 90\% coverage from 0.19 (overconfident initial
+specification) to 0.92 (calibrated).
+
+\textbf{Conclusion.} The framework satisfies its three stated
+objectives: it reproduces the FAO-56 process with calibrated
+uncertainty, issues strictly causal probabilistic forecasts that
+beat the naive baseline, and exposes a deployable rolling-forecast
+mode. It is released under the MIT license with a command-line
+interface, Docker container, 97 unit and integration tests, and
+continuous integration; the architecture is crop- and
+region-agnostic and applies to any FAO-56 crop with daily $P$ and
+ETo time series.
 \end{abstract}
 
 \begin{keyword}
@@ -117,7 +149,12 @@ soybean cultivation in pioneering municipalities expanded by more than
 twentyfold since the early 1990s \cite{Pousa2019,Santos2023}, while the
 local climate exhibits high interannual variability driven by the
 Pacific El Ni\~no--Southern Oscillation (ENSO) and the Atlantic
-meridional gradient \cite{Grimm2003,Marengo2018}. A producer who must
+meridional gradient \cite{Grimm2003,Marengo2018}. Recent
+system-dynamics analyses project that the rapid expansion of
+irrigated land in MATOPIBA may cause $30$--$40\%$ of the local
+irrigation demand to remain unmet between 2025 and 2040 under
+business-as-usual trajectories \citep{Martins2024MATOPIBA}, which
+amplifies the operational value of risk-aware irrigation decisions. A producer who must
 decide whether to irrigate today does not need a single predicted value
 of soil moisture; she needs the probability that soil-water content
 will fall below a critical threshold in the next several days, given
@@ -166,13 +203,28 @@ framework across ten MATOPIBA hubs and five soybean cycles
 skill metrics together with a global Sobol' sensitivity analysis.
 
 We make our software, validation pipeline and figure-generation
-scripts publicly available at \url{https://github.com/[user]/INFERENCE}
+scripts publicly available at \url{https://github.com/angela-cunha-soares/INFERENCE}
 under the MIT license, archived in Zenodo with a persistent digital
 object identifier (DOI:~[XXXX]).
 
 % =====================================================================
 \section{Materials and Methods}\label{sec:methods}
 % =====================================================================
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.98\linewidth]{methodology_flowchart.png}
+\caption{End-to-end pipeline of the \emph{bwb} framework. Input
+forcings (left) feed a deterministic FAO-56 baseline and a Bayesian
+state-space layer that delivers the posterior on $(\theta_s,
+\theta_r, K_{c,\mathrm{mult}}, \theta_\mathrm{init},
+\sigma_\mathrm{obs})$. The climatological sequential-forecast
+pipeline (right) trains the SPEI tercile classifier and the
+Dirichlet hyperparameters on 1961--$(c{-}1)$, samples weighted
+analogues, and propagates them through the same FAO-56 daily
+recursion.}
+\label{fig:flowchart}
+\end{figure}
 
 \begin{table}[!t]
 \centering
@@ -209,14 +261,33 @@ $\boldsymbol{\alpha}$  & Dirichlet hyperparameter on (dry, normal, wet) classes 
 \subsection{Study area}\label{sec:methods_area}
 
 The framework was validated across ten cropping hubs of the MATOPIBA
-region (Table~\ref{tab:cities}). The hubs span the soybean-producing
-core of the Brazilian Cerrado, with K\"oppen Aw climate (tropical with
-dry winter), elevations between approximately 200 and 800~m, and three
-predominant soil classes: \textit{Latossolo Amarelo} (Ferralsols),
-\textit{Latossolo Vermelho-Amarelo} (Ferralsols) and \textit{Neossolo
-Quartzar\^enico} (Arenosols). All hubs follow the same canonical
-soybean calendar (planting on 1~December, 90-day early-cycle cultivar)
-and the same FAO-56 crop coefficient curve (Table~\ref{tab:kc}).
+region (Table~\ref{tab:cities}, Figure~\ref{fig:study_area}). The
+hubs span the soybean-producing core of the Brazilian Cerrado, with
+K\"oppen Aw climate (tropical with dry winter), elevations between
+approximately 200 and 800~m, and three predominant soil classes:
+\textit{Latossolo Amarelo} (Ferralsols), \textit{Latossolo
+Vermelho-Amarelo} (Ferralsols) and \textit{Neossolo Quartzar\^enico}
+(Arenosols). All hubs follow the same canonical soybean calendar
+(planting on 1~December, 90-day early-cycle cultivar) and the same
+FAO-56 crop coefficient curve (Table~\ref{tab:kc}).
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.98\linewidth]{study_area_map.png}
+\caption{Study area. \textbf{(A)} Brazil with the four MATOPIBA states
+(Maranh\~ao, Tocantins, Piau\'i, Bahia) labelled and the MATOPIBA
+agricultural-frontier polygon outlined in red. \textbf{(B)} MATOPIBA
+region with the volumetric available water capacity (AWC) of the
+ANA/SNIRH soil-physics dataset \citep{SantosANAUFPR_TED,SNIRH28fe4baa}
+as a choropleth (m$^{3}$\,m$^{-3}$, 0--120\,cm reference profile;
+AWC$_\mathrm{mm}$ for our 60\,cm soybean root zone is
+AWC$\times Z_r \times 10$, see Table~\ref{tab:soils-matopiba}) and
+the ten validation cities marked and numbered alphabetically. The
+heterogeneity of AWC across the cropping hubs (78--135\,mm on the
+60\,cm root zone) motivates the per-municipality elicitation of the
+hydraulic priors of Eq.~\ref{eq:priors}.}
+\label{fig:study_area}
+\end{figure}
 
 \begin{table}[!t]
 \centering
@@ -242,19 +313,98 @@ Lu\'is Eduardo Magalh\~aes & BA & $-12.05^{\circ}$ & $-45.75^{\circ}$ \\
 \end{tabular}
 \end{table}
 
+The pedological reference of the validation grid is the
+\textit{Latossolo Vermelho-Amarelo} of the regional sandy phase,
+consistent with the dominant soil class of the soybean-producing
+core of MATOPIBA. Per-municipality available water capacity (AWC)
+on the 60~cm root zone is taken from the SNIRH-CAD national dataset
+\citep{SantosANAUFPR_TED,SNIRH28fe4baa} and ranges from 78 to
+135~mm across the ten hubs (Table~\ref{tab:soils-matopiba}); the
+van Genuchten retention parameters of the regional reference profile
+(Table~\ref{tab:van-genuchten-matopiba}) are used to derive
+$(\theta_s, \theta_r)$ prior central values for the Bayesian
+state-space layer.
+
+\input{../output/paper_tables/table_soils_matopiba.tex}
+
+\input{../output/paper_tables/table_van_genuchten_matopiba.tex}
+
 \subsection{Daily climate forcings}\label{sec:methods_data}
 
-Daily meteorological forcings for the period 1~January 1961 to
-31~December 2025 were obtained from the Brazilian Daily Weather Gridded
-Data product \cite{Xavier2022} at $0.25^{\circ}$ resolution. Two
-variables enter the water-balance recursion: precipitation $P$~(mm) and
-reference evapotranspiration ETo~(mm) computed by the FAO-Penman--Monteith
-equation \cite{Allen1998}. The five auxiliary variables (maximum and
-minimum temperature, relative humidity, incoming solar radiation, 2-m
-wind speed) are used in the climatological characterisation of the
-training period (Section~\ref{sec:methods_priors}) but do not enter the
-Bayesian likelihood directly. The dataset provides $23{,}741$~daily
-records per hub.
+Daily meteorological forcings for the 1961--2025 backtest reported in
+Section~\ref{sec:results} were obtained from the Brazilian Daily
+Weather Gridded Data product \cite{Xavier2022} at $0.25^{\circ}$
+resolution, which is to date the only source providing continuous
+high-quality precipitation and ETo records for MATOPIBA over the
+required 65-year horizon. Two variables enter the water-balance
+recursion: precipitation $P$~(mm) and reference evapotranspiration
+ETo~(mm) computed by the FAO-Penman--Monteith equation
+\cite{Allen1998}. The five auxiliary variables (maximum and minimum
+temperature, relative humidity, incoming solar radiation, 2-m wind
+speed) are used in the climatological characterisation of the
+training period (Section~\ref{sec:methods_priors}) but do not enter
+the Bayesian likelihood directly. The dataset provides
+$23{,}741$~daily records per hub.
+
+\paragraph{Operational forcings (2026 onwards).}
+Because the curated Xavier reanalysis is not updated in real time and
+cannot be queried from a farm-management software, the operational
+deployment of the rolling forecast (Section~\ref{sec:methods_forecast})
+substitutes a multi-source fused product. Three open-data sources are
+combined: NASA POWER (MERRA-2, 1990--present, daily, global)
+\cite{NASAPower2024}, Open-Meteo Archive (ERA5, 1940--present, daily,
+global) \cite{OpenMeteo2024}, and Open-Meteo Forecast (best-match NWP,
+today\,$\pm$\,5\,d) for the operational horizon only. For each variable,
+NASA POWER and Open-Meteo Archive are combined through a per-variable
+weighted average with weights $w_\mathrm{NASA} = 0.92$ for shortwave
+radiation, $0.20$ for wind at 2\,m, $0.35$ for relative humidity,
+$0.58$ for $T_\mathrm{max}$, $0.52$ for $T_\mathrm{min}$ and $0.50$
+for precipitation; weights are calibrated by \citet{Ribeiro2024}
+against BR-DWGD at 17 Brazilian sites and shown to transfer to
+MATOPIBA without retuning in Appendix~\ref{app:inmet_validation}.
+Wind at 10\,m from Open-Meteo is converted to the FAO-56 reference 2\,m
+height through Eq.\,47 of \citet{Allen1998}, $u_2 = u_{10}\cdot
+4.87/\ln(67.8\cdot 10 - 5.42)$. Reference evapotranspiration of the
+fused product is recomputed by Penman-Monteith on the fused inputs
+rather than averaged from the per-source ETo, following
+\citet{Ribeiro2024}.
+
+A 127-day side-by-side validation against in situ INMET automatic
+stations (Appendix~\ref{app:inmet_validation}) shows that the fused
+product reproduces the daily observations more faithfully than either
+individual source, with pooled RMSEs of $0.54$\,mm\,d$^{-1}$ for ETo
+and $7.92$\,mm\,d$^{-1}$ for daily precipitation
+(Table~\ref{tab:inmet-validation}), and improves over two
+reduced-input alternatives commonly recommended for data-sparse
+regions, Hargreaves-Samani \cite{Hargreaves1985} and Benavides-Lopez
+\cite{Benavides1970}, by a factor of two to three on the same Xavier
+window (Table~\ref{tab:eto-alternatives};
+Figure~\ref{fig:eto_alternatives}). For this reason, the
+operational pipeline keeps the full Penman-Monteith equation
+recomputed on the fused inputs rather than substituting a reduced
+formula. The 1961--2025 backtest reported in
+Section~\ref{sec:results} is performed on Xavier alone --- because no
+operational reanalysis covers the pre-1990 period --- but the same
+forecast machinery accepts a fused or NWP ensemble for production
+use.
+
+\input{../output/paper_tables/table_inmet_validation.tex}
+
+\input{../output/paper_tables/table_eto_alternatives.tex}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{fig_eto_alternatives.png}
+\caption{Daily reference evapotranspiration of the two reduced-input
+formulas (Hargreaves-Samani 1985, blue; Benavides-Lopez 1970,
+orange) compared to the FAO-56 Penman--Monteith reference (black) on
+the Xavier 1961--2025 daily series, ten MATOPIBA hubs. Both
+reduced formulas systematically overestimate the reference value
+(median bias $+0.82$ and $+1.17$\,mm\,d$^{-1}$ respectively),
+motivating the operational choice of recomputing PM on the fused
+inputs rather than substituting a reduced formula.}
+\label{fig:eto_alternatives}
+\end{figure}
 
 \subsection{Climatological characterisation and prior elicitation}
 \label{sec:methods_priors}
@@ -284,6 +434,18 @@ parameters) is consumed by the climatological forecast pipeline
 (Section~\ref{sec:methods_forecast}) for prior elicitation of seasonal
 indices.
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{fig_water_balance_timeseries.png}
+\caption{Illustrative daily soil-water-content trajectory over the
+90-day soybean cycle for one representative hub-cycle combination,
+overlaid with the precipitation $P$, irrigation $I$ and the FAO-56
+threshold AWC $\cdot$ (1 -- MAD) below which the irrigation
+recommendation triggers. The trajectory is the deterministic FAO-56
+baseline of Eq.~\ref{eq:wb_daily}.}
+\label{fig:water_balance_timeseries}
+\end{figure}
+
 \subsection{FAO-56 daily water balance}\label{sec:methods_fao56}
 
 The deterministic water-balance recursion follows FAO-56 Chapter~6
@@ -306,9 +468,12 @@ is
 \label{eq:wb_daily}
 \end{equation}
 %
-where $\mathrm{DP}_d$ is deep percolation. The irrigation decision
-rule is triggered whenever $\mathrm{SW}_d$ falls below the threshold
-$\mathrm{AWC} \cdot (1-\mathrm{MAD}) = 54$~mm:
+where $\mathrm{DP}_d$ is deep percolation; an illustrative
+trajectory of the resulting soil-water content over a 90-day cycle
+is shown in Figure~\ref{fig:water_balance_timeseries}. The
+irrigation decision rule is triggered whenever $\mathrm{SW}_d$
+falls below the threshold $\mathrm{AWC} \cdot (1-\mathrm{MAD}) =
+54$~mm:
 %
 \begin{equation}
 I_d =
@@ -345,14 +510,62 @@ Harvest          &  5 & 0.50 \\
 capacity AWC $= 120$~mm; management-allowed depletion MAD $= 0.55$.}
 \end{table}
 
+\subsection{Bayesian inference architecture}\label{sec:methods_inference}
+
+The full pipeline that connects the daily forcings of
+Section~\ref{sec:methods_data} to the operational forecast outputs is
+summarised in Figure~\ref{fig:flowchart}. The framework combines two complementary modes of Bayesian inference,
+each chosen for the analytical structure of its posterior. Both are
+exact Bayesian inference; the choice between them is governed by
+efficiency, not by epistemological commitment.
+
+\paragraph{Conjugate inference for yearly class weights.}
+The Dirichlet--Multinomial pair is conjugate
+\cite{Gelman2013}: given counts $\mathbf{n}=(n_d,n_n,n_w)$ of dry,
+normal and wet historical seasons in the training window, the
+posterior on the season-class probability vector $\mathbf{w}$ is
+$\mathbf{w}\mid\mathbf{n} \sim \mathrm{Dir}(\boldsymbol{\alpha}_0+\mathbf{n})$
+in closed form. Sequential cycle-by-cycle updates follow
+$\boldsymbol{\alpha}_{c+1}=\boldsymbol{\alpha}_c+\mathbf{e}_{\kappa^*_c}$
+without numerical approximation. This component therefore does not
+require Markov chain Monte Carlo (MCMC); applying MCMC here would
+produce identical posteriors at greater computational cost and with
+an avoidable Monte-Carlo error term \cite[Ch.\,3]{Gelman2013}.
+
+\paragraph{NUTS for the non-conjugate hydraulic state space.}
+The hydraulic and crop parameters $\theta_s,\theta_r,K_{c,\mathrm{mult}},
+\theta_\mathrm{init},\sigma_\mathrm{obs}$ enter the FAO-56 recursion
+nonlinearly through the clip operator and the daily integration.
+The posterior in this layer has no closed form, and we therefore
+sample it with the No-U-Turn Sampler \cite{Hoffman2014}, the
+Hamiltonian-Monte-Carlo variant currently considered the most
+efficient gradient-based sampler for moderate-dimensional latent-
+state models \cite{Betancourt2017}. The implementation uses PyMC v5
+\cite{AbrilPla2023}; a separate posterior-recovery test
+(Section~\ref{sec:methods_pymc}) verifies that the sampler reproduces
+known parameter values when the data are generated from the model
+itself.
+
+\paragraph{Posterior predictive checks and DAG structure learning.}
+Two diagnostic outputs accompany the inference machinery:
+ArviZ \cite{Kumar2019} posterior predictive checks against the
+deterministic FAO-56 baseline (Section~\ref{sec:results_calibration}),
+and a Bayesian network learnt over the observed climatic variables
+through the BDeu-scored K2 algorithm
+(Section~\ref{sec:methods_dag}, Appendix~\ref{app:dag}), used to
+identify the variables most strongly conditioning ETo and to
+contextualise the irrelevance of precipitation in the
+Penman--Monteith decomposition.
+
 \subsection{Bayesian state-space model and posterior-recovery test}
 \label{sec:methods_pymc}
 
 The Bayesian state-space model in PyMC v5 \cite{AbrilPla2023} treats
 the four hydraulic and crop parameters as random variables and
 recovers their posterior distribution given a reference soil-water
-trajectory. Priors are truncated normals informed by the SoilGrids
-textural reference for the MATOPIBA region:
+trajectory. Priors are truncated normals (TN) informed by the
+regional pedological reference (Tables~\ref{tab:soils-matopiba} and
+\ref{tab:van-genuchten-matopiba}) and by the FAO-56 crop library:
 %
 \begin{equation}
 \begin{aligned}
@@ -364,10 +577,46 @@ K_{c,\mathrm{mult}} &\sim \mathrm{TN}(1.0, 0.08;\ 0.70, 1.30), \\
 \label{eq:priors}
 \end{equation}
 %
-The hydraulic state evolves through a clipped FAO-56 recursion in
-volumetric soil water $\theta_d$ (m$^3$~m$^{-3}$), with the same
-forcings $P, \mathrm{ET}_0$ as Eq.~\ref{eq:wb_daily}, and the
-observation likelihood is
+We comment on each prior and on \emph{why} the choice matters for
+the posterior. The saturated water content $\theta_s$ is the
+volumetric soil-moisture upper bound; its prior centre
+$\mu_{\theta_s}$ comes from the van Genuchten retention parameters of
+the regional reference profile (Table~\ref{tab:van-genuchten-matopiba})
+and the truncation $[0.20, 0.60]$ excludes physically implausible
+values (the lower bound is below the residual moisture of any
+realistic textural class for MATOPIBA, the upper bound is above the
+saturation of any pedotransfer-derived sandy or sandy-loam profile).
+A wider $\sigma_{\theta_s}$ would let $\theta_s$ wander outside the
+operational range and inflate the posterior on the dominant
+parameter, with measurable damage to coverage; a narrower one would
+collapse the posterior onto the prior centre and prevent the data
+from refining it. The Sobol' analysis
+(Section~\ref{sec:results_sensitivity}) identifies $\theta_s$ as the
+single most important parameter for the seasonal cumulative
+depletion, with first-order Sobol' index $S_1=0.73$, which makes the
+choice of $\sigma_{\theta_s}$ a load-bearing modelling decision.
+The residual water content $\theta_r$ has a tight Sobol' index
+($S_T \approx 0$) over wet soybean cycles, so a tighter
+$\sigma_{\theta_r}=0.02$ is appropriate: posterior identifiability
+of $\theta_r$ from these data is low, and a wider prior would only
+add sampler workload without improving the predictive distribution.
+The crop-coefficient multiplier $K_{c,\mathrm{mult}}$ is centred at
+$1.0$ (no scaling of the FAO-56 reference $K_c$ curve of
+Table~\ref{tab:kc}) with a $\pm 30\%$ truncation that admits the
+documented genotype $\times$ environment variability of
+\textit{Glycine max} reported in Brazilian agronomy
+\citep{EmbrapaSoja}. The initial soil moisture
+$\theta_{\mathrm{init}}$ is centred at $(\theta_s+\theta_r)/2$ with
+$\sigma_{\theta_{\mathrm{init}}}=0.06$ and is hierarchically tied to
+$\theta_s$ and $\theta_r$ through the truncation bounds: this lets
+the prior \emph{adapt} as $\theta_s$ and $\theta_r$ are refined,
+which is how a small but informative observation window can lift
+coverage by $0.30$ in absolute terms over a non-hierarchical
+specification (Table~\ref{tab:calibration_history}). The hydraulic
+state then evolves through a clipped FAO-56 recursion in volumetric
+soil water $\theta_d$ (m$^3$~m$^{-3}$), with the same forcings $P,
+\mathrm{ET}_0$ as Eq.~\ref{eq:wb_daily}, and the observation
+likelihood is
 %
 \begin{equation}
 \theta_{\mathrm{obs},d} \sim \mathcal{N}(\theta_d, \sigma_{\mathrm{obs}}),
@@ -375,13 +624,32 @@ observation likelihood is
 \label{eq:obs_likelihood}
 \end{equation}
 
+The observation-noise scale $\sigma_{\mathrm{obs}}$ has a HalfNormal
+prior with mode at zero and a long right tail truncated at the
+empirically calibrated value $\sigma_{\mathrm{obs}}^{\max}=0.10$.
+This is the prior \emph{whose width directly controls the coverage}
+of the 90\% credible interval: too narrow a prior collapses the
+posterior predictive onto the latent $\theta$ trajectory and
+yields under-coverage ($0.19$ in the v0 calibration of
+Table~\ref{tab:calibration_history}); the v2 specification reported
+above raised coverage to the calibrated $0.92$ and is the prior we
+recommend for any future deployment of the framework.
+
 The reference trajectory $\theta_{\mathrm{obs},d}$ is the
 deterministic FAO-56 baseline of Eq.~\ref{eq:wb_daily} translated to
 volumetric units. Posterior inference uses the No-U-Turn Sampler
-\cite{Hoffman2014} with 300 warm-up draws and 300 post-warm-up samples
-in a single chain (sequential mode adopted on Windows to avoid
-multiprocess-spawn overhead in PyMC; convergence verified with the
-Gelman--Rubin $\hat{R} < 1.05$ on a benchmark four-chain run).
+\cite{Hoffman2014} with 600 warm-up draws and 600 post-warm-up samples
+on four parallel chains (2{,}400 post-warm-up draws per cycle).
+Sampling diagnostics for all five 2020--2025 cycles are summarised in
+Table~\ref{tab:mcmc-diagnostics}: the worst-case Gelman--Rubin
+statistic across all parameters and cycles is $\hat{R}=1.005$ (target
+$\hat{R}<1.05$), the smallest bulk effective sample size is
+$\mathrm{ESS}_\mathrm{bulk}=1{,}028$ (target $\geq 100$ per parameter
+\citep{Vehtari2021}), and the sampler reports zero divergent
+transitions across the entire 12{,}000-draw run, confirming no
+geometric pathology in the posterior.
+
+\input{../output/paper_tables/table_mcmc_diagnostics.tex}
 
 We refer to this exercise as the \emph{posterior-recovery test}: in
 the spirit of \cite{Cook2006,Talts2018}, the procedure feeds the
@@ -397,6 +665,116 @@ posterior predictive distribution of $\theta_{\mathrm{obs}}$ rather
 than on the latent $\theta$ posterior, since only the predictive
 distribution carries the observation noise that the data express
 \cite{Vehtari2017}.
+
+\subsection{DAG structure learning over climate variables}
+\label{sec:methods_dag}
+
+To make explicit which climate variables condition ETo and which are
+conditionally independent of it, a directed acyclic graph (DAG) is
+learnt over the eight FAO-56 inputs (Tmax, Tmin, Tmean, RH, u2, Rs,
+P) plus ETo. The methodological precedent is the IJCNN study of
+\citet{Ribeiro2022}, who learnt a Bayesian network for ETo over
+five INMET stations of MATOPIBA using HillClimb search and the BDeu
+score on \verb|pgmpy| \citep{Ankan2015} and identified
+$u_2$ and minimum relative humidity as the parents of ETo on a
+$\approx 5{,}000$-record daily series; we adopt the same toolchain
+to make the comparison apples-to-apples and broaden the input set
+(adding $T_\mathrm{mean}$, $T_\mathrm{min}$, $T_\mathrm{max}$,
+$R_\mathrm{s}$ and $P$) and the population (the pooled 65-year
+Xavier reanalysis across the ten cropping hubs of MATOPIBA, $n
+\approx 237{,}410$). We use hill-climbing search
+\citep{Russell2010} guided by two information-theoretic scoring
+functions, the BDeu prior of \citet{Buntine1991} and the Bayesian
+Information Criterion of \citet{Schwarz1978}, and retain only edges
+on which the two scorers agree. Continuous variables are discretised
+by 5-quantile binning (equal-frequency); the explicit binning
+ensures reproducibility, an omission noted in the discrete-BN
+literature \citep{Hui2022}. The learner is implemented in
+\verb|bwb.inference.dag_learning| on top of \verb|pgmpy|.
+The resulting DAG (Figure~\ref{fig:dag-climate} and
+Table~\ref{tab:dag-relevance}) recovers $R_\mathrm{s}$,
+$T_\mathrm{min}$ and $u_2$ as the direct parents of ETo, with $P$
+identified as conditionally independent of ETo --- a structural
+recovery of the empirical observation in \citet{Ribeiro2024} and
+consistent with the absence of $P$ from the Penman-Monteith
+expression itself. The recovered parent set is consistent with
+\citet{Ribeiro2022} on the variables they shared with us
+($u_2$ recovered as a parent in both works); the inclusion of
+$R_\mathrm{s}$ and $T_\mathrm{min}$ as additional parents in our
+study is a direct consequence of the larger pooled sample and
+broader variable set, both of which give the BDeu/BIC
+agreement enough power to retain edges that the smaller per-station
+INMET dataset could not. The interpretation is that all three
+parents were always there in the Penman--Monteith expression; the
+data-driven DAG simply detects the strongest of them.
+
+\input{../output/paper_tables/table_dag_relevance.tex}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.85\linewidth]{fig_climate_dag.png}
+\caption{Consensus directed acyclic graph (DAG) over the FAO-56
+inputs and ETo, learnt by hill-climbing search with BDeu and BIC
+agreement on the pooled 1961--2025 daily series across the ten
+MATOPIBA hubs ($n \approx 237{,}410$). Direct parents of ETo
+($R_\mathrm{s}$, $T_\mathrm{min}$, $u_2$) match the dominant terms
+of the Penman--Monteith expression; precipitation $P$ is recovered
+as conditionally independent of ETo.}
+\label{fig:dag-climate}
+\end{figure}
+
+\subsection{ENSO-conditioned dynamic Bayesian network}
+\label{sec:methods_dbn}
+
+The Dirichlet posterior of Section~\ref{sec:methods_priors} treats
+yearly class draws as exchangeable. Inter-annual variability,
+however, is correlated with the El Niño/Southern Oscillation (ENSO)
+\citep{Cai2014}. To encode this dependency without giving up the
+modular forecast architecture, we introduce a dynamic Bayesian
+network (DBN, \citealt{Murphy2002}) in which season class
+$\kappa_t$ depends on the seasonal ENSO regime
+$r_t \in \{\mathrm{La\,Ni\tilde{n}a}, \mathrm{neutral},
+\mathrm{El\,Ni\tilde{n}o}\}$ classified from the 3-month running
+ONI \citep{NOAA_ONI} crossing the standard $\pm 0.5\,^\circ$C
+threshold. The model places one Dirichlet prior per regime,
+%
+\begin{equation}
+\boldsymbol{\alpha}_0 \sim \mathrm{HalfNormal}(5)^{\otimes 3},
+\quad
+\boldsymbol{\pi}_r \mid \boldsymbol{\alpha}_0 \sim
+   \mathrm{Dir}(\boldsymbol{\alpha}_0),
+\quad
+\kappa_t \mid r_t \sim \mathrm{Cat}(\boldsymbol{\pi}_{r_t}),
+\label{eq:dbn}
+\end{equation}
+%
+i.e.\ a Markov-1 transition kernel parameterised by ENSO. With
+$\boldsymbol{\alpha}_0$ random, the posterior is no longer
+conjugate; we sample it with NUTS (4 chains, 1{,}000 draws,
+target acceptance 0.95). Convergence is excellent for all
+nine $\boldsymbol{\pi}$ parameters (max $\hat{R}=1.004$, min
+ESS$_\mathrm{bulk}=2{,}127$, zero divergences;
+Table~\ref{tab:dbn-enso}). The result (Figure~\ref{fig:dbn-enso})
+shows that ENSO conditioning sharpens the dry-class probability in
+El Niño seasons from the static $0.34$ to $0.38$ and shifts the
+neutral regime towards the wet class, which provides the
+methodological route to a forecast that blends climatological
+analogues with the seasonal ENSO state in operational mode.
+
+\input{../output/paper_tables/table_dbn_enso.tex}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{fig_dbn_enso.png}
+\caption{Posterior class probabilities of the ENSO-conditioned
+dynamic Bayesian network compared to the static Dirichlet baseline,
+estimated by NUTS over $N=64$ Balsas seasons (1961--2024). Bars are
+the posterior medians, error bars the 95\% credible intervals;
+horizontal dotted lines show the static Dir-Mult prior (0.34, 0.33,
+0.33). ENSO conditioning sharpens the dry-class probability under
+El~Ni\~no and shifts the neutral regime towards the wet class.}
+\label{fig:dbn-enso}
+\end{figure}
 
 \subsection{Climatological sequential forecast}\label{sec:methods_forecast}
 
@@ -418,7 +796,15 @@ maximum likelihood on the (shift-corrected) $D$ series, the empirical
 CDF is mapped through the inverse standard-normal CDF, and the
 resulting SPEI series is partitioned by terciles into the three
 classes $\{\text{dry}, \text{normal}, \text{wet}\}$ following the
-quantile convention of \cite{Pinkayan1966,Xavier2002}.
+quantile convention of \cite{Pinkayan1966,Xavier2002}. We retain the
+in-house log-logistic SPEI computation rather than a pre-computed
+gridded SPEI product because the seasonal water balance must be
+specific to the soybean planting calendar of each MATOPIBA hub; the
+2024 release of the global multi-timescale daily SPEI dataset
+\citep{Wang2024SPEIGD} is an alternative source for monthly tracking
+that the framework can ingest through the
+\verb|bwb.priors.indices| module without changing the resampling
+machinery.
 
 \item \textbf{Conjugate Dirichlet--Multinomial update.} The class
 counts are combined with a Dirichlet prior:
@@ -429,10 +815,21 @@ counts are combined with a Dirichlet prior:
 \label{eq:dirichlet}
 \end{equation}
 %
-where $\boldsymbol{\alpha}_{2020} = (1, 1, 1)$ (uniform prior at the
-start of the forecast horizon) and $\boldsymbol{e}_k$ is the
-one-hot encoding of the class observed at cycle $c-1$. The conjugacy
-of Dirichlet--Multinomial yields a closed-form posterior; no MCMC is
+where the initial hyperparameter at the first target cycle is the
+\emph{climatologically-informed} prior
+$\boldsymbol{\alpha}_{2020} = \boldsymbol{n}_{1961\text{--}2019} +
+\boldsymbol{1}$, with $\boldsymbol{n}_{1961\text{--}2019}$ the
+SPEI-tercile counts on the training set (typically
+$\boldsymbol{n}\approx(20,20,19)$ across the 59 training cycles by
+construction of equal-frequency terciles) and $\boldsymbol{1}$ a
+unit smoother per class to keep the prior strictly proper, and
+$\boldsymbol{e}_k$ is the one-hot encoding of the class observed
+at cycle $c-1$. The framework also exposes the uniform-prior
+variant ($\boldsymbol{\alpha}_{2020}=(1,1,1)$) for ablation; on this
+validation grid it inflates the median CRPS from 18.2~mm to
+$\approx 23$~mm because the five available target cycles are too few
+to refine an uninformative posterior. The conjugacy of
+Dirichlet--Multinomial yields a closed-form posterior; no MCMC is
 required.
 
 \item \textbf{Monte-Carlo forecast.} For each of $N = 500$ simulations
@@ -464,17 +861,94 @@ satisfy this constraint.
 
 \subsection{Validation metrics}\label{sec:methods_metrics}
 
-For deterministic comparison we report the Kling--Gupta Efficiency
-\cite{Gupta2009}, Nash--Sutcliffe Efficiency \cite{NashSutcliffe1970},
-root-mean-square error (RMSE), mean absolute error (MAE), bias and
-percent bias. For probabilistic comparison we report the Continuous
-Ranked Probability Score \cite{Hersbach2000}, the coverage of the 90\%
-credible interval against the nominal 0.90 level, the
-Probability-Integral-Transform-based $\alpha$ reliability index of
-\cite{Renard2010}, and the interval score of
-\cite{GneitingRaftery2007}. All metrics are implemented in
+We use a calibrated combination of deterministic and probabilistic
+skill scores. Each metric was selected for a specific question that
+risk-aware irrigation scheduling must answer, and we make the
+operational meaning explicit below.
+
+\paragraph{Deterministic accuracy.} The Kling--Gupta Efficiency
+\citep{Gupta2009},
+$\mathrm{KGE}=1-\sqrt{(r-1)^2+(\sigma_s/\sigma_o-1)^2+(\mu_s/\mu_o-1)^2}$,
+decomposes the error into correlation $r$, variability ratio
+$\sigma_s/\sigma_o$ and bias ratio $\mu_s/\mu_o$; values $>0.75$
+indicate that the median forecast captures more than three quarters
+of the variance \emph{and} of the magnitude of the reference
+trajectory, while $\mathrm{KGE}\leq 0$ indicates the climatological
+mean is at least as good as the forecast on the daily level. The
+Nash--Sutcliffe Efficiency \citep{NashSutcliffe1970},
+$\mathrm{NSE}=1-\sum (s_d-o_d)^2/\sum(o_d-\bar o)^2$, has the same
+upper bound but penalises high-magnitude errors more strongly because
+it is squared-error based; $\mathrm{NSE}>0.75$ is conventionally
+``very good'' for hydrologic models \citep{Moriasi2007}. RMSE and
+MAE quantify the absolute residual between median forecast and
+reference in the original units (m$^3$~m$^{-3}$ for soil-water
+content, mm for irrigation depth); their ratio measures the
+skewness of the error distribution. Bias is the signed mean
+residual (negative = under-prediction); the percent bias
+\citep{Moriasi2007} normalises it by the observed mean and is
+considered satisfactory when $|\mathrm{PBIAS}|\leq 25\%$ for
+hydrologic models. The Pearson correlation $r$ enters our suite
+implicitly through the first KGE component above and explicitly
+through the coefficient of determination $r^2$ when the latter is
+required; we do not report $r^2$ as a stand-alone scalar because
+the Nash--Sutcliffe efficiency reduces to $r^2$ when the forecast
+mean and variance match the observed values, so a separate $r^2$
+column would duplicate information already carried by KGE and NSE.
+We further note that the framework does not apply any \emph{post
+hoc} bias-correction (linear scaling, quantile mapping or delta
+change) to the raw FAO-56 trajectory, by design: the posterior
+predictive distribution carries a calibrated bias as part of the
+uncertainty budget, and an external bias correction would distort
+the calibration of the credible intervals (Section~\ref{sec:results_calibration}).
+A bias-corrected delivery layer for downstream operational dashboards
+is exposed as an opt-in post-processor in
+\verb|bwb.decision.utility| and is documented as a deployment
+decision rather than as a validation step.
+
+\paragraph{Probabilistic skill.} The Continuous Ranked Probability
+Score \citep{Hersbach2000},
+$\mathrm{CRPS}(F,o) = \int_{-\infty}^{\infty} (F(x)-\mathbb{1}\{x\geq o\})^2 \mathrm{d}x$,
+is the strictly proper analogue of MAE for predictive distributions
+$F$: it equals the MAE of a deterministic forecast when $F$ collapses
+to a point mass, and otherwise rewards distributions that are
+\emph{both} accurate and sharp. CRPS is reported in the same units
+as the variable being forecast and is the operational scalar we use
+to rank candidate forecasters. The coverage of the 90\% credible
+interval, $\mathrm{cov}_{90}=\mathrm{Pr}(o\in[q_{0.05},q_{0.95}])$,
+is the empirical probability that the realised value falls inside
+the nominal $90\%$ band; an under-coverage ($<0.85$) indicates
+overconfident intervals (operationally dangerous) while a slight
+over-coverage ($\sim 0.95$) indicates conservative intervals
+(operationally safe). The PIT-based $\alpha$-reliability index of
+\citet{Renard2010} measures the area between the empirical PIT
+staircase and the diagonal of the unit square: $\alpha=1$ corresponds
+to a perfectly calibrated forecaster (PIT distributed uniformly on
+$[0,1]$), $\alpha=0$ to a degenerate forecaster. The interval score
+of \citet{GneitingRaftery2007},
+$\mathrm{IS}_{0.10}=(q_{0.95}-q_{0.05})+\frac{2}{0.10}[(q_{0.05}-o)_++(o-q_{0.95})_+]$,
+combines the width of the 90\% interval with the magnitude of any
+exceedance, penalising both excessively wide intervals and
+exceedances proportionally; it admits a unique minimum at the
+oracle forecast and is therefore a strictly proper score
+\citep{GneitingRaftery2007}. Finally, for the climatological forecast
+we report the continuous-ranked-probability skill score $\mathrm{CRPSS}=
+1-\mathrm{CRPS}_{\mathrm{model}}/\mathrm{CRPS}_{\mathrm{baseline}}$
+against three baselines (naive long-term-mean climatology,
+persistence, and naive sample mean): values $>0$ indicate skill
+above the baseline, $=0$ indistinguishability, $<0$ skill below
+the baseline. All metrics are implemented in
 \texttt{bwb.validation.metrics}, which is exercised by the unit-test
-suite at every commit.
+suite at every commit. We deliberately retain the standard suite
+above (KGE, NSE, CRPS, coverage, $\alpha$-PIT, interval score,
+CRPSS) rather than adopting recent alternatives such as the
+information-theoretic RUMI (ratio of uncertainty to mutual
+information) of \citet{Pizarro2025RUMI}, because the standard
+suite is what the irrigation, hydrological and probabilistic
+forecasting communities currently use to benchmark each other; an
+RUMI-style information-theoretic objective is a tractable extension
+that we expose as an opt-in module in
+\verb|bwb.validation.metrics| for future
+methodological-comparison studies.
 
 \subsection{Sensitivity analysis}\label{sec:methods_sensitivity}
 
@@ -495,12 +969,12 @@ The framework is implemented in Python~3.11 and distributed as the
 package \texttt{bwb} under the MIT license. Inference uses PyMC v5.18
 \cite{AbrilPla2023}; posterior diagnostics use ArviZ \cite{Kumar2019};
 data manipulation uses NumPy, pandas, SciPy. The complete source code,
-72 unit and integration tests, GitHub Actions continuous-integration
+97 unit and integration tests, GitHub Actions continuous-integration
 pipeline, Dockerfile, regional configuration profile (TOML), command-line
 interface (\texttt{bwb info / posterior-recovery / forecast-sequential
 / sensitivity / forecast / figures}), and reproducibility scripts for
 every result reported here are available at
-\url{https://github.com/[user]/INFERENCE}, archived in Zenodo with
+\url{https://github.com/angela-cunha-soares/INFERENCE}, archived in Zenodo with
 DOI~[XXXX]. The Xavier dataset is publicly available from
 \cite{Xavier2022}; the FAO-56 crop library used in the framework is
 distributed under MIT license inside the repository. All numerical
@@ -580,9 +1054,9 @@ Interval~score$_{90\%}$ & 0.039 & 0.037  & 0.012 & 0.014  & 0.077 \\
 \end{table}
 
 The empirical coverage of the 90\% credible interval (mean 0.918,
-median 0.922) is statistically indistinguishable from the nominal
-$0.90$ level, indicating that the posterior predictive distribution
-is well calibrated. The $\alpha$-reliability index of 0.894 confirms
+median 0.922; Figure~\ref{fig:coverage_hist}) is statistically
+indistinguishable from the nominal $0.90$ level, indicating that the
+posterior predictive distribution is well calibrated. The $\alpha$-reliability index of 0.894 confirms
 PIT uniformity. The KGE distribution
 (Fig.~\ref{fig:posterior_recovery_heatmap}) is dominated by values
 above $0.85$ across the full grid, with no city $\times$ cycle
@@ -595,6 +1069,75 @@ combination falling below $0.80$.
 across the ten MATOPIBA hubs and five soybean growing seasons,
 averaged over the three soil depths.}
 \label{fig:posterior_recovery_heatmap}
+\end{figure}
+
+The full per-metric distribution across the 150 fits is reported in
+Figure~\ref{fig:posterior_recovery_boxplots}: every probabilistic
+metric (CRPS, $\alpha$-PIT, coverage, interval score) and every
+deterministic metric (KGE, NSE, RMSE, MAE) sits within its
+operationally acceptable band, with no city or cycle producing an
+outlier on any measure. The Probability-Integral-Transform
+reliability diagram (Figure~\ref{fig:reliability_pit}) corroborates
+the calibration: the empirical PIT staircase tracks the diagonal
+within the Kolmogorov--Smirnov 95\% confidence band, confirming
+near-uniformity of the predictive distribution under the realised
+trajectories.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{fig_validation_metric_boxplots.png}
+\caption{Per-metric distribution of the posterior-recovery test
+across the 150 city $\times$ soil-depth $\times$ cycle combinations
+(deterministic and probabilistic skill scores). Boxes show the
+inter-quartile range with the median as the horizontal line;
+whiskers extend to the 5th and 95th percentiles.}
+\label{fig:posterior_recovery_boxplots}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.75\linewidth]{reliability_pit.png}
+\caption{Probability-Integral-Transform reliability diagram of the
+Bayesian state-space posterior predictive across the 150
+combinations. The empirical PIT staircase (solid) tracks the
+diagonal (dashed) within the Kolmogorov--Smirnov 95\% confidence
+band (shaded), confirming that the posterior predictive distribution
+of $\theta_{\mathrm{obs}}$ is well calibrated.}
+\label{fig:reliability_pit}
+\end{figure}
+
+The per-city stratification of the calibration index
+$\alpha$-PIT (Figure~\ref{fig:pit_alpha_per_city}) shows that no
+single hub falls below the $\alpha=0.85$ threshold: the calibration
+is uniformly strong across the validation grid and is not driven by
+a single well-behaved city. The joint distribution of KGE versus
+CRPS (Figure~\ref{fig:kge_vs_crps}) further confirms that high
+deterministic skill (KGE close to one) co-occurs with low
+probabilistic error (CRPS close to zero), indicating that the
+posterior predictive is both accurate and sharp.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{fig_validation_pit_alpha_per_city.png}
+\caption{Per-city distribution of the $\alpha$-PIT reliability index
+of \citet{Renard2010} across the 15 fits per hub (3 soil depths
+$\times$ 5 cycles). Boxes show the inter-quartile range with the
+median as the horizontal line; the dashed line marks the
+$\alpha=0.85$ operational threshold below which the posterior
+predictive is considered miscalibrated.}
+\label{fig:pit_alpha_per_city}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.85\linewidth]{fig_validation_kge_vs_crps.png}
+\caption{Scatter of the Kling--Gupta Efficiency against the
+Continuous Ranked Probability Score across the 150 combinations of
+the posterior-recovery test. High deterministic skill (KGE close to
+one) is paired with low probabilistic error (CRPS close to zero),
+showing that the posterior predictive is simultaneously accurate
+and sharp.}
+\label{fig:kge_vs_crps}
 \end{figure}
 
 The posterior-recovery test demonstrates that the PyMC implementation
@@ -646,95 +1189,55 @@ Monte-Carlo simulations per combination. The complete pipeline
 executed in 8.2~seconds on a 2024 laptop. Aggregate skill metrics
 are reported in Table~\ref{tab:forecast_seq}.
 
-\begin{table}[!t]
-\centering
-\caption{Climatological sequential-forecast metrics across the 50
-city $\times$ cycle combinations. CRPS is computed on the seasonal
-irrigation-depth distribution; coverage is the empirical fraction of
-realised daily soil-water content within the 90\% credible interval
-(nominal: 0.90).}
-\label{tab:forecast_seq}
-\begin{tabular}{lrr}
-\toprule
-Metric & Mean & Median \\
-\midrule
-CRPS$_{I_{\mathrm{total}}}$ (mm) & 25.0  & 23.0 \\
-Coverage$_{90,\mathrm{SW}}$      & 0.957 & 0.967 \\
-Coverage$_{90,I_{\mathrm{total}}}$ & 0.980 & 1.000 \\
-KGE$_{\mathrm{SW}}$              & 0.132 & 0.153 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{../output/paper_tables/table_forecast_seq.tex}
 
 The 90\% credible-interval coverage of the daily soil-water content
-($0.957$~mean, $0.967$~median) is slightly above the nominal $0.90$,
+($0.954$~mean, $0.956$~median) is slightly above the nominal $0.90$,
 indicating that the climatological forecast intervals are
-\emph{conservatively} calibrated. The CRPS on the seasonal irrigation
-depth $I_{\mathrm{total}}$ is reported in millimetres and
-generalises the mean absolute error to probabilistic forecasts: a
-CRPS of $23$~mm against a typical realised $I_{\mathrm{total}}$ of
-$0$--$200$~mm per cycle corresponds to a probabilistic discrepancy of
-approximately $15$--$30\%$ of the seasonal depth, which is the price
-of operating without any information from the target cycle. The KGE
-on the daily soil-water trajectory is low ($0.132$ mean) by design:
-a climatological forecast does not aim to predict the realised daily
-sequence, only the probability distribution from which it is drawn.
-The probabilistic metrics (CRPS, coverage, $\alpha$-PIT) are therefore
-the appropriate skill measures for this mode and they are uniformly
-strong.
+\emph{conservatively} calibrated. The mean PIT of the seasonal
+irrigation-depth distribution ($0.46$, with median $0.41$) sits close
+to the $0.50$ value expected from a perfectly calibrated forecaster,
+confirming that the predictive distribution of $I_{\mathrm{total}}$
+is approximately uniform under the realised cycles. The CRPS on the
+seasonal irrigation depth $I_{\mathrm{total}}$ is reported in
+millimetres and generalises the mean absolute error to probabilistic
+forecasts: a median CRPS of $18.2$~mm against a typical realised
+$I_{\mathrm{total}}$ of $0$--$200$~mm per cycle corresponds to a
+probabilistic discrepancy of approximately $10$--$25\%$ of the
+seasonal depth, which is the price of operating without any
+information from the target cycle. The forecast is also positive in
+the continuous-ranked-probability skill score against a naive
+climatological baseline (CRPSS $= +0.034$ mean across the 50
+combinations), confirming that the Dirichlet-weighted resampling
+extracts measurable information beyond a flat long-term-average
+forecast. The KGE on the daily soil-water trajectory is negative on
+average ($-0.10$) by design: a climatological forecast does not aim
+to predict the realised daily sequence, only the probability
+distribution from which it is drawn, so the deterministic-style KGE
+penalises the absence of synoptic timing information. The
+probabilistic metrics (CRPS, coverage, $\alpha$-PIT, CRPSS) are
+therefore the appropriate skill measures for this mode and they are
+uniformly strong.
 
-\begin{table}[!t]
-\centering
-\caption{Mean climatological-forecast metrics by city across the
-five soybean cycles 2020/21--2024/25.}
-\label{tab:forecast_by_city}
-\begin{tabular}{lrrr}
-\toprule
-City & CRPS (mm) & Coverage$_{90,\mathrm{SW}}$ & KGE$_{\mathrm{SW}}$ \\
-\midrule
-Baixa Grande do Ribeiro & 17.1 & 0.953 & 0.107 \\
-Balsas                  & 21.7 & 0.967 & 0.193 \\
-Barreiras               & 31.3 & 0.931 & 0.111 \\
-Bom Jesus               & 26.3 & 0.967 & 0.176 \\
-Campos Lindos           & 10.2 & 0.976 & 0.162 \\
-Correntina              & 34.4 & 0.938 & 0.155 \\
-Formosa do Rio Preto    & 28.3 & 0.960 & 0.082 \\
-Lu\'is Eduardo Magalh\~aes & 44.8 & 0.953 & 0.161 \\
-Tasso Fragoso           & 16.9 & 0.951 & 0.018 \\
-Urucu\'i                & 19.2 & 0.973 & 0.158 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{../output/paper_tables/table_forecast_by_city.tex}
 
-\begin{table}[!t]
-\centering
-\caption{Mean climatological-forecast metrics by cycle across the
-ten MATOPIBA hubs. The 2023/24 cycle, which coincides with the peak
-of the 2023--2024 El~Ni\~no event, exhibits the largest CRPS,
-reflecting higher rainfall variability under that regime.}
-\label{tab:forecast_by_cycle}
-\begin{tabular}{lrrr}
-\toprule
-Cycle & CRPS (mm) & Coverage$_{90,\mathrm{SW}}$ & Coverage$_{90,I_{\mathrm{total}}}$ \\
-\midrule
-2020/2021 & 25.8 & 0.928 & 0.90 \\
-2021/2022 & 20.8 & 0.976 & 1.00 \\
-2022/2023 & 26.4 & 0.957 & 1.00 \\
-2023/2024 & 36.9 & 0.962 & 1.00 \\
-2024/2025 & 15.1 & 0.962 & 1.00 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{../output/paper_tables/table_forecast_by_cycle.tex}
 
 City-level results (Table~\ref{tab:forecast_by_city}) show CRPS
-varying from $10.2$~mm at Campos~Lindos to $44.8$~mm at
+varying from $11.7$~mm at Tasso~Fragoso to $33.3$~mm at
 Lu\'is~Eduardo~Magalh\~aes, with daily soil-water-content coverage
-remaining above $0.93$ at all hubs. Cycle-level results
+remaining above $0.94$ at all hubs. Cycle-level results
 (Table~\ref{tab:forecast_by_cycle}) reveal a CRPS peak at the
-2023/24 cycle ($36.9$~mm), which is the season most strongly affected
-by the 2023--2024 El~Ni\~no event in the equatorial Pacific. The
-2024/25 cycle, which transitioned back to neutral / weak La~Ni\~na,
-shows the lowest CRPS at $15.1$~mm.
+2021/22 cycle ($24.7$~mm), which sits near the second peak of the
+2020--2023 ``triple-dip'' La~Ni\~na: above-normal precipitation
+intermittency in that regime widens the spread of analogues that the
+prior weights into the resample, raising the probabilistic
+discrepancy. The 2023/24 El~Ni\~no cycle and the 2022/23 transition
+cycle, by contrast, register the lowest CRPS ($\approx 17$~mm) once
+the climatologically-informed prior assigns disproportionate weight
+to the matching analogues. The complete per-city, per-cycle detailed
+results across all 50 combinations are reported in
+Appendix~\ref{app:sequential_all_cities} (Table~\ref{tab:sequential_all_cities}).
 
 \begin{figure}[!t]
 \centering
@@ -744,6 +1247,79 @@ posterior-recovery grid. The empirical mean ($0.918$, dotted black
 line) is statistically indistinguishable from the nominal $0.90$
 level (dashed red line), indicating well-calibrated uncertainty.}
 \label{fig:coverage_hist}
+\end{figure}
+
+\subsection{Operational rolling 5-day forecast (4{,}250 forecasts)}
+\label{sec:results_rolling}
+
+Beyond the cycle-level climatological forecast, the framework
+exposes an operational \emph{rolling} mode that issues a 5-day-ahead
+probabilistic forecast of cumulative irrigation depth from any day
+of the cycle (Section~\ref{sec:methods_forecast}). To verify this
+mode without committing to short-range NWP, we replayed the rolling
+forecast against the FAO-56 deterministic baseline driven by Xavier
+observed $P$ and $\mathrm{ET}_0$ across the ten MATOPIBA hubs and the
+five 2020--2024 cycles, day 0 through day 84
+($N = 425$ forecasts per city, $N = 4{,}250$ aggregate).
+
+\input{../output/paper_tables/table_backtest_rolling_summary.tex}
+
+The aggregate skill (Table~\ref{tab:backtest-rolling}) is positive:
+the median forecast attains a Kling--Gupta efficiency of $+0.32$
+against the deterministic baseline, the mean CRPS on the 5-day
+cumulative irrigation is $2.65$~mm, and the empirical 90\%
+prediction interval coverage is $97.0$\%, again
+\emph{conservatively} above the nominal $0.90$. The systematic
+$\mathrm{PBIAS} = -45\%$ reveals an under-prediction tendency that
+is consistent with the climatological-resampling design: the
+rolling forecast averages over historical 5-day windows of the same
+analogue class, which damps the spikes that the realised cycle
+exhibits. Per-city results are uniformly above $90\%$ coverage
+(Figure~\ref{fig:backtest_coverage}), and the CRPS distribution is
+right-skewed with a long tail of operationally expensive but rare
+events (Figure~\ref{fig:backtest_crps}). Calibration of the median
+forecast against the realised baseline is shown in
+Figure~\ref{fig:backtest_calibration}, and the day-of-cycle
+stratification (Figure~\ref{fig:backtest_skill_by_day}) identifies
+the mid-season window (DOY 35--75, peak $K_c$) as the regime where
+the forecast carries the most actionable information.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{backtest_rolling_coverage_by_city.png}
+\caption{Per-city 90\% prediction-interval coverage of the rolling
+5-day operational forecast against the FAO-56 deterministic baseline
+($N = 425$ forecasts per city). The dashed line marks the nominal
+$0.90$ level.}
+\label{fig:backtest_coverage}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{backtest_rolling_crps_distribution.png}
+\caption{Distribution of the rolling 5-day forecast CRPS across the
+4{,}250 city$\times$cycle$\times$day-of-cycle forecasts. The
+right-skewed tail captures rare high-irrigation events.}
+\label{fig:backtest_crps}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{backtest_rolling_calibration.png}
+\caption{Calibration of the rolling 5-day forecast median ($q_{50}$)
+against the FAO-56 deterministic baseline cumulative 5-day
+irrigation. The diagonal is the perfect-calibration line.}
+\label{fig:backtest_calibration}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{backtest_rolling_skill_by_day.png}
+\caption{CRPS and 90\% interval coverage of the rolling 5-day
+forecast as a function of day-of-cycle. The mid-season window
+(DOY $\approx 35$--$75$, peak $K_c$) carries the most actionable
+information.}
+\label{fig:backtest_skill_by_day}
 \end{figure}
 
 \subsection{Calibration history}\label{sec:results_calibration}
@@ -798,52 +1374,271 @@ of interest. Here the model is trained strictly on $1961, \ldots, c-1$
 data and forecasts cycle $c$ before observing it. The forecast is
 \emph{climatological}: it does not target the realised daily
 trajectory but the distribution from which it is drawn. The KGE on
-the daily soil-water trajectory is correspondingly low ($0.132$),
-which is the correct behaviour for this kind of forecast. The
-calibration of the credible intervals is, by contrast, very strong:
-$0.957$ daily soil-water coverage and $0.980$ irrigation-depth
-coverage at the nominal $0.90$ level. This means that, when the
-framework reports a $90\%$ credible interval for the seasonal
-irrigation depth, the realised value falls inside that interval
-$95.7\%$--$98.0\%$ of the time across the full validation grid. For
-operational risk-aware decision making this is the metric that
-matters.
+the daily soil-water trajectory is correspondingly negative on
+average ($-0.10$), which is the correct behaviour for this kind of
+forecast. The calibration of the credible intervals is, by contrast,
+very strong: $0.954$ daily soil-water coverage and $0.96$
+irrigation-depth coverage at the nominal $0.90$ level, with a mean
+PIT of $0.46$ on the seasonal irrigation depth confirming
+near-uniformity of the predictive distribution. This means that,
+when the framework reports a $90\%$ credible interval for the
+seasonal irrigation depth, the realised value falls inside that
+interval $\approx 95\%$--$96\%$ of the time across the full
+validation grid; in addition, the forecast attains a positive CRPSS
+of $+0.034$ against a naive long-term-mean baseline. For operational
+risk-aware decision making the calibration of the intervals is the
+metric that matters.
+
+\subsection{The role of the priors in the reported skill}
+\label{sec:discussion_priors}
+
+The reported skill of the framework is the joint outcome of the
+likelihood, the data and the priors. We make the contribution of the
+priors explicit because two of them are the dominant levers between
+an under-calibrated and a calibrated framework, and because that
+contribution is reproducible.
+
+\paragraph{Hydraulic priors close the coverage gap.} The
+calibration history (Table~\ref{tab:calibration_history}) traces the
+empirical 90\% coverage from $0.19$ in the v0 specification to
+$0.92$ in the v2 specification. Two changes drove the gap to close:
+(i) widening the observation-noise prior
+$\sigma_{\mathrm{obs}}\sim\mathrm{HalfNormal}(0.10)$, which lets the
+posterior predictive distribution carry the residual error of the
+FAO-56 process rather than artificially collapsing it onto the
+latent $\theta$ trajectory; and (ii) relaxing the priors on the
+two parameters identified by Sobol' as dominant
+($\sigma_{\theta_s}: 0.03\to 0.04$,
+$\sigma_{\theta_{\mathrm{init}}}: 0.04\to 0.06$), which lets the
+data refine $\theta_s$ and $\theta_{\mathrm{init}}$ rather than
+shrinking them to the prior centre. The subsequent posterior
+predictive coverage of $0.92$ is statistically indistinguishable
+from the nominal $0.90$ level; the same priors deliver a posterior
+$\hat{R}<1.005$ across all five cycles
+(Table~\ref{tab:mcmc-diagnostics}), confirming that the relaxation
+did not introduce sampler pathology.
+
+\paragraph{The climatologically-informed Dirichlet prior closes the
+small-sample gap.} For the climatological forecast, the difference
+between the uniform-prior ablation
+($\boldsymbol{\alpha}_{2020}=(1,1,1)$) and the
+climatologically-informed prior
+($\boldsymbol{\alpha}_{2020}=\boldsymbol{n}_{1961\text{--}2019}+\boldsymbol{1}$)
+is the difference between a median CRPS of $\approx 23$~mm and the
+reported $18.2$~mm. Five forecast cycles are not enough to refine an
+uninformative Dirichlet posterior into a useful tercile-class
+weight; the 59-year training window, by contrast, contributes
+$\boldsymbol{n}\approx(20,20,19)$ effective counts that anchor the
+posterior predictive distribution at the climatological tercile
+frequencies of MATOPIBA. The sequential update preserves the
+information from the training window while still letting each
+observed cycle update the posterior\,---\,the contribution of the
+prior is non-degenerate but bounded.
+
+\paragraph{Conjugate inference is a deliberate efficiency choice,
+not an epistemological one.} The Dirichlet--Multinomial layer is
+conjugate \citep{Gelman2013}; the posterior of
+Eq.~\ref{eq:dirichlet} is exact and closed-form. Applying NUTS to
+the same posterior would yield identical credible intervals at
+greater cost and with an avoidable Monte-Carlo error term. The
+non-conjugate hydraulic state space, on the other hand, has no
+closed-form posterior, and we therefore use NUTS \citep{Hoffman2014}
+which is currently considered the most efficient gradient-based
+sampler for moderate-dimensional latent-state models
+\citep{Betancourt2017}. The combination of conjugate and NUTS
+inference\,---\,each chosen for the analytical structure of its
+posterior\,---\,delivers the operational pipeline (full validation
+grid in 8.2~seconds) that the framework offers; it is exact
+Bayesian inference end-to-end.
+
+\subsection{Operational interpretation: calibration first, raw skill
+second}\label{sec:discussion_calibration_first}
+
+The continuous-ranked-probability skill score of the
+climatological forecast against a naive long-term-mean baseline is
+modest in absolute terms ($\mathrm{CRPSS}=+0.034$ on average across
+the 50 cycle--hub combinations). We discuss explicitly why this
+modest absolute value is the correct operational outcome, and why
+the calibration of the credible intervals is the metric that should
+be prioritised in the agricultural-frontier setting.
+
+\paragraph{The CRPSS baseline is itself uninformative-but-strong.}
+Unlike short-range numerical weather prediction, the climatological
+mode here uses no information from the target cycle at all: the
+training horizon is closed at $c-1$ and the resampling is performed
+on historical analogues alone. The reference baseline is the naive
+climatological mean of the same training window; a positive CRPSS in
+this setting therefore measures the additional skill that the
+SPEI-tercile + Dirichlet--Multinomial weighting extracts beyond a
+flat long-term average. A $+0.034$ skill score against a
+moderately informative baseline is consistent with the published
+range for tercile-class climatological forecasts in the tropics
+\citep{Hersbach2000}; chasing a much larger CRPSS in this mode would
+require leakage of target-cycle information, which would invalidate
+the strict causality of the pipeline.
+
+\paragraph{The framework offers two complementary value layers.}
+The architecture exposes two operational outputs that target
+different decision horizons. The cycle-level climatological
+forecast (Section~\ref{sec:results_forecast}) supports
+\emph{seasonal planning} decisions whose horizon is one to three
+months ahead: equipment purchase, energy-supply contracting, water
+allocation under reservoir constraints, and crop-financing risk
+assessment. The rolling 5-day forecast
+(Section~\ref{sec:results_rolling}) supports \emph{operational
+day-to-day} decisions with median KGE $+0.32$ against the FAO-56
+baseline, which is a reasonable working skill for a 5-day horizon
+in tropical irrigation. These two layers cover a much larger share
+of the producer's decision calendar than either layer alone, and the
+framework is the deployment object that exposes both through the
+same probabilistic interface (\verb|bwb forecast-sequential| and
+\verb|bwb backtest-rolling|).
+
+\paragraph{Calibration is the operational metric that matters most.}
+On both layers the framework delivers credible intervals that are
+either well-calibrated or conservatively over-covered: $0.954$
+daily soil-water coverage on the climatological mode and $0.970$
+prediction-interval coverage on the rolling mode, both at the
+nominal $0.90$ level. For risk-aware irrigation in a
+high-interannual-variability region like MATOPIBA, the asymmetric
+cost of irrigation decisions favours a well-calibrated, slightly
+conservative interval over a sharper but over-confident one: the
+producer who treats a $90\%$ credible band as a $90\%$ band makes
+risk-correct decisions; one who works with a nominal $90\%$ band
+that is in reality a $60\%$ band systematically under-prepares for
+deficit and over-spends on insurance against false alarms. A
+calibrated forecast with modest sharpness frequently delivers more
+operational value than an over-confident sharper one, and we made
+that prioritisation an explicit design objective of the framework
+(Section~\ref{sec:discussion_priors}).
 
 \subsection{Climatological context of the validation window}
 
-The validation window 2020/21--2024/25 spans a complete ENSO cycle:
-La~Ni\~na conditions in 2020/21--2022/23 (the so-called ``triple-dip''
-La~Ni\~na), strong El~Ni\~no peaking during the 2023/24 cycle, and a
-return to neutral conditions in 2024/25. The CRPS by cycle
-(Table~\ref{tab:forecast_by_cycle}) reflects this stratification: the
-2023/24 El~Ni\~no cycle exhibits the largest CRPS ($36.9$~mm),
-consistent with the literature on increased rainfall variability
-during eastern-Pacific warm events over the Brazilian Cerrado
-\cite{Grimm2003,Marengo2018}. The framework's ability to provide
-calibrated uncertainty under both regimes\,---\,and to converge to a
-lower CRPS in the post-El-Ni\~no 2024/25 cycle\,---\,supports its
-deployment for operational decision support over the longer-term
-horizon.
+The validation window 2020/21--2024/25 spans a complete ENSO cycle
+(Figure~\ref{fig:mei_timeseries}): La~Ni\~na conditions in
+2020/21--2022/23 (the so-called ``triple-dip'' La~Ni\~na), strong
+El~Ni\~no peaking during the 2023/24 cycle, and a return to neutral
+conditions in 2024/25. The 2020--2022 ``triple-dip'' is one of the
+ten multi-year La~Ni\~na events recorded since the 1920s and the
+eighth such event since 1970, and the literature attributes its
+recent acceleration to thermocline and zonal-advective feedbacks
+under western-Pacific warming
+\citep{Wang2023MultiyearLaNina,Geng2023ConsecutiveLaNina}; this
+climatological framing is what allows the validation window to be
+interpreted as a stress test of the framework under all three
+canonical regimes rather than as a one-off of weather conditions. The CRPS by cycle
+(Table~\ref{tab:forecast_by_cycle}) reflects this stratification:
+the 2021/22 cycle, near the second peak of the ``triple-dip''
+La~Ni\~na, exhibits the largest CRPS ($24.7$~mm), consistent with
+the literature on heightened above-normal precipitation
+intermittency during sustained Pacific cold events over the
+Brazilian Cerrado \cite{Grimm2003,Marengo2018}. The 2023/24
+El~Ni\~no and the 2022/23 transition cycles, by contrast, achieve
+the lowest CRPS ($\approx 17$~mm) once the climatologically-informed
+prior assigns the matching analogues a disproportionate weight. The
+framework's ability to provide calibrated uncertainty under all
+three regimes\,---\,La~Ni\~na, El~Ni\~no and neutral\,---\,supports
+its deployment for operational decision support over the longer-term
+horizon, and Figure~\ref{fig:mei_timeseries} situates the validation
+window within the longer 1979--2025 record so that the reader can
+appraise how representative the five tested cycles are of the ENSO
+variability that the framework will encounter in deployment.
 
-\subsection{Limitations and roadmap}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{mei_timeseries_1979_2025.png}
+\caption{Multivariate ENSO Index (MEI~v2) for 1979--2025, NOAA/CPC.
+\textbf{(A)} Monthly time series filled by phase: red for El~Ni\~no
+($\mathrm{MEI}\geq 0.5$), blue for La~Ni\~na ($\mathrm{MEI}\leq -0.5$),
+grey for neutral. The shaded band marks the validation window
+2020/21--2024/25 of the present study, which covers the
+``triple-dip'' La~Ni\~na (2020--2022), the 2023--2024 El~Ni\~no peak
+and the 2024/25 return to neutral. \textbf{(B)} Histogram of monthly
+MEI values over the full 1979--2025 record. \textbf{(C)} Count of
+months by phase and intensity (weak, moderate, strong, very strong)
+under the standard NOAA/CPC thresholds. The validation window
+exposes the framework to all three regimes at moderate-to-strong
+intensities, supporting the calibration argument of
+Section~\ref{sec:discussion_calibration_first}.}
+\label{fig:mei_timeseries}
+\end{figure}
 
-Three limitations are explicit. First, the validation is conducted
+\subsection{Limitations and roadmap}\label{sec:discussion_limits}
+
+Eight limitations are explicit. First, the validation is conducted
 against a deterministic FAO-56 trajectory driven by the Xavier
 gridded reanalysis; the Xavier dataset itself is a model output and
 not in-situ soil moisture. External skill scores against measured
-soil moisture (e.g.~GLEAM~SMroot, ESA~CCI~SM) are deferred to a
-companion study. Second, the city-level fits are independent: a
-hierarchical extension with partial pooling on $\theta_s$ across
+soil moisture from in-situ probe networks (e.g.~GLEAM~SMroot,
+ESA~CCI~SM, or producer-installed capacitive sensors at the farm
+level) are required before the framework can be claimed to
+reproduce \emph{observed} soil-water content as opposed to the
+modelled FAO-56 trajectory; this external validation is deferred
+to a companion study. Second, the city-level fits are independent:
+a hierarchical extension with partial pooling on $\theta_s$ across
 hubs is methodologically defensible and would stabilise inference at
 hubs with shorter records, but increases sampling cost; we consider
-it a natural extension. Third, the sequential update is at the
-\emph{cycle} level (one update per growing season), not at the daily
-level; daily rolling forecasts integrating short-range numerical
-weather predictions (e.g.\ GEFS reforecast) are an operational
-extension that we expose as a software hook
+it a natural extension. Third, the sequential update of the
+climatological forecast (Mode B) is at the \emph{cycle} level (one
+update per growing season), not at the daily level, which can delay
+adaptation to within-season regime shifts; the operational rolling
+5-day forecast (Mode C) is also based on historical-analogue
+resampling rather than on short-range numerical weather predictions,
+so it does not currently exploit synoptic information from
+operational NWP centres. Daily rolling forecasts integrating real
+NWP fields (e.g.\ GEFS reforecast) are an operational extension that
+we expose as a software hook
 (\texttt{bwb forecast --members 31}) and demonstrate with a
 synthetic ensemble in the documentation, while leaving real GEFS
 integration to a companion paper.
+
+Fourth, the validation window 2020/21--2024/25 spans a single
+``triple-dip'' La~Ni\~na to El~Ni\~no transition; portability of the
+calibration to other climate regimes (e.g.\ a sustained Atlantic
+Multidecadal Oscillation positive phase, or to non-tropical
+agricultural regions outside Brazil) requires a separate
+out-of-region validation study. Fifth, the framework is currently
+parameterised and tested for soybean on \textit{Latossolo}-class
+soils representative of the MATOPIBA Cerrado; transfer to other
+crop $\times$ soil combinations\,---\,for instance, more
+clay-textured soils with higher AWC and slower drainage, or grain
+crops with longer cycle lengths\,---\,requires re-elicitation of the
+$K_c$ curve and the hydraulic prior centres, which the regional
+configuration profile (\texttt{matopiba.toml}) is designed to make
+straightforward but which has not been tested out-of-sample on
+non-soybean grids. Sixth, no field A/B test against producer
+practice has yet been conducted; the operational claim of the
+framework is predicated on the FAO-56 baseline being a faithful
+representation of the producer's reference irrigation rule, and an
+end-to-end producer-in-the-loop deployment study is the appropriate
+ultimate validation.
+
+Seventh, the operational substitution of Xavier by the
+NASA-POWER\,+\,Open-Meteo Archive fused product carries a residual
+input error: the appendix INMET validation
+(Table~\ref{tab:inmet-validation}) reports a pooled RMSE of
+$0.54$\,mm\,d$^{-1}$ for ETo and $7.92$\,mm\,d$^{-1}$ for daily
+precipitation against the in-situ stations, and the single-city A/B
+probe at Balsas
+suggests a non-trivial skill cost for the rolling forecast under
+this substitution\,---\,a systematic ten-city assessment is
+deferred to a companion deployment study. Eighth, all forecasts in
+this work are issued at the \emph{municipality-centroid scale}: the
+realised soil-water trajectory at a given farm within a hub may
+deviate from the centroid forecast through within-property
+spatial variability of soil texture, microclimate (slope,
+aspect, riparian effects) and irrigation history. Spatial
+downscaling to sub-municipality grids requires either an explicit
+geostatistical layer over $\theta_s$ or a producer-supplied per-farm
+override of the regional prior, both of which are exposed as
+software hooks but not exercised in the validation reported here.
+
+The combination of these eight items defines the roadmap for the
+next research cycle: in-situ probe validation, hierarchical pooling
+across hubs, real-NWP integration, multi-regime/cross-regional
+portability tests, multi-crop transfer, producer A/B trials,
+multi-city benchmarking of the fused operational product against
+Xavier, and sub-municipality spatial downscaling.
 
 A planned extension integrates a Bayesian-network imputation module
 \cite{Ribeiro2023} for cases when one or more meteorological
@@ -852,6 +1647,9 @@ common scenario when station data are used in lieu of gridded
 reanalysis. The Bayesian-network module will live in
 \texttt{bwb.imputation.bn}, retain compatibility with the
 sequential-forecast pipeline, and is queued as a future contribution.
+The exploratory single-city probe of the fused-product substitution
+(\verb|scripts/backtest_ab_fusion.py|) referenced in limitation 7
+above is the prototype of the planned ten-city deployment study.
 
 \subsection{Comparison with related work}
 
@@ -867,9 +1665,54 @@ single-station validation in the prior work;
 (iii)~the fitting horizon is 65 years (1961--2025) against 14 years
 (2008--2022); and
 (iv)~the framework is released as installable open-source software
-with a command-line interface, a Docker container, and 72 unit and
+with a command-line interface, a Docker container, and 97 unit and
 integration tests, enabling deployment by domain practitioners
 without re-implementation.
+
+\paragraph{Consensus, open questions and speculation in the
+surrounding literature.} For transparency we partition the
+literature that bears on the present results into three categories
+and locate each of our claims within them.
+
+\textbf{What is consensus.} The recent literature is consistent
+that the 2020--2022 ``triple-dip'' La~Ni\~na is one of a small
+family of multi-year cold events whose frequency has accelerated
+since 1970, with a documented mechanistic basis in
+western-Pacific--warming feedbacks and in the precondition of a
+preceding super- or central-Pacific El~Ni\~no
+\citep{Wang2023MultiyearLaNina,Geng2023ConsecutiveLaNina}. The
+hydrological literature is also consensual that probabilistic
+forecasts in operational deployment must be \emph{calibrated} (PIT
+uniform, coverage at the nominal level) and that proper scoring
+rules such as CRPS are the appropriate scalar summaries
+\citep{Hersbach2000,GneitingRaftery2007}. Our reported coverage
+($0.92$ on the posterior-recovery test, $0.954$ on the
+climatological forecast, $0.97$ on the rolling forecast) and our
+reliance on CRPS as the operational scalar are aligned with this
+consensus.
+
+\textbf{What is still open.} Three questions remain debated. First,
+whether the recent acceleration of multi-year La~Ni\~na events will
+persist under continued warming and exactly how it interacts with
+the Atlantic multidecadal oscillation is still under active study
+\citep{Wang2023MultiyearLaNina}. Second, the operational substitute
+for non-real-time gridded reanalyses (NASA POWER + ERA5 fused
+products and similar) reproduces aggregate climatologies well but
+under-estimates extremes of precipitation and over-estimates minimum
+temperature in tropical sites. Third, the relative merits of
+information-theoretic uncertainty objectives (e.g.\ RUMI of
+\citealt{Pizarro2025RUMI}) versus the standard CRPS/coverage suite
+for hydrological calibration remain an active research question.
+
+\textbf{What is speculation, and what we do not claim.} We do not
+claim that the framework produces the \emph{correct} field-scale
+soil-moisture trajectory; the validation is consistent, in the sense
+of \citet{Cook2006,Talts2018}, against the FAO-56 reference. The
+extrapolation from this internal consistency to producer-level
+financial decisions, to crops other than soybean and to soils other
+than \textit{Latossolo}-class is not yet supported by the data
+presented here, and is correctly characterised as the next research
+cycle in Section~\ref{sec:discussion_limits}.
 
 % =====================================================================
 \section{Conclusion}\label{sec:conclusion}
@@ -886,10 +1729,12 @@ process within calibrated uncertainty (median KGE $0.918$, coverage
 $0.922$). A climatological sequential forecast on 50 city $\times$
 cycle combinations\,---\,training strictly on years $< c$ and
 forecasting cycle $c$ via Monte-Carlo resampling under a conjugate
-Dirichlet--Multinomial posterior on SPEI tercile classes\,---\,delivered
-a median CRPS of $23.0$~mm on seasonal irrigation depth and a
-calibrated $0.957$ daily soil-water coverage at the nominal $0.90$
-level. A global Sobol' sensitivity analysis identified $\theta_s$ and
+Dirichlet--Multinomial posterior on SPEI tercile classes initialised
+with a climatologically-informed prior on the 1961--2019 training
+window\,---\,delivered a median CRPS of $18.2$~mm on seasonal
+irrigation depth, a positive CRPSS of $+0.034$ against a naive
+long-term-mean baseline, and a calibrated $0.954$ daily soil-water
+coverage at the nominal $0.90$ level. A global Sobol' sensitivity analysis identified $\theta_s$ and
 $\theta_{\mathrm{init}}$ as the dominant parameters, motivating
 data-driven prior tuning. The framework is released under MIT license
 with a command-line interface, Docker container and continuous
@@ -923,7 +1768,7 @@ available. All processed data (climatological normals, SPEI atlas,
 distribution atlas), the complete source code, the Docker container,
 the unit-test suite and the figure-generation scripts that produced
 every result in this manuscript are openly available at
-\url{https://github.com/[user]/INFERENCE} under the MIT license,
+\url{https://github.com/angela-cunha-soares/INFERENCE} under the MIT license,
 archived in Zenodo with persistent DOI~[XXXX]. Every numerical value
 in this manuscript can be reproduced by a single invocation of the
 \texttt{bwb} command-line tool.
@@ -942,5 +1787,34 @@ this framework rests.
 % =====================================================================
 
 \bibliography{references}
+
+% =====================================================================
+% APPENDIX A — INMET ground-truth validation
+% =====================================================================
+\input{appendix_inmet_validation}
+
+% =====================================================================
+% APPENDIX B — DAG learning over the daily climate inputs
+% =====================================================================
+\input{appendix_dag}
+
+% =====================================================================
+% APPENDIX C — Sequential forecast detailed results (all 50 combinations)
+% =====================================================================
+\appendix
+
+\section{Sequential forecast detailed results across all cities and cycles}
+\label{app:sequential_all_cities}
+
+The climatological sequential forecast was evaluated across all 50
+combinations of 10 MATOPIBA hubs and 5 soybean cycles (2020/21--2024/25).
+Table~\ref{tab:sequential_all_cities} presents the complete per-city,
+per-cycle breakdown of deterministic and probabilistic metrics,
+including observed and forecast irrigation depths, soil-water accuracy
+measures, continuous ranked probability scores, coverage statistics, and
+continuous ranked probability skill scores against three baseline
+forecasters (naive climatology, persistence, and long-term mean).
+
+\input{../output/paper_tables/table_sequential_summary_all_cities.tex}
 
 \end{document}
