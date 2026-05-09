@@ -52,7 +52,38 @@ PAPER_FIGS.mkdir(parents=True, exist_ok=True)
 
 CLASS_NAMES = ["dry", "normal", "wet"]
 N_CLASSES = 3
-ALPHA_0 = np.ones(N_CLASSES, dtype=float)
+# alpha_0 is now per-city (climatologically informed). It is reconstructed
+# below as alpha_final - cumulative_counts(observed safras).
+ALPHA_0_FALLBACK = np.ones(N_CLASSES, dtype=float)
+
+
+def _alpha_init_per_city(summary: pd.DataFrame) -> dict[str, np.ndarray]:
+    """Recover the per-city initial Dirichlet prior from alpha_final - counts.
+
+    With the climatologically-informed prior, each city has a different
+    alpha_0 (~ (20, 20, 20) with smoother). We back it out by subtracting
+    the cumulative counts of observed safra classes from the persisted
+    alpha_final_<city>.json file.
+    """
+    out = {}
+    for city, group in summary.groupby("city"):
+        path = ALPHA_DIR / f"alpha_final_{city}.json"
+        if not path.exists():
+            print(f"  [warn] missing alpha_final for {city}, "
+                  "falling back to Dir(1,1,1)", file=sys.stderr)
+            out[city] = ALPHA_0_FALLBACK.copy()
+            continue
+        alpha_final = np.asarray(json.loads(path.read_text()), dtype=float)
+        counts = np.zeros(N_CLASSES, dtype=float)
+        for _, row in group.iterrows():
+            counts[int(row["observed_class"])] += 1
+        alpha_init = alpha_final - counts
+        if (alpha_init < 0).any():
+            print(f"  [warn] {city}: alpha_init has negatives "
+                  f"{alpha_init}; clipping to >= 0", file=sys.stderr)
+            alpha_init = np.maximum(alpha_init, 0.0)
+        out[city] = alpha_init
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -93,10 +124,11 @@ def derive_predicted_probabilities(summary: pd.DataFrame) -> pd.DataFrame:
     Verification: the alpha_post after the last cycle reconstructed here must
     equal the value persisted in ``alpha_final_<city>.json``.
     """
+    alpha_init_per_city = _alpha_init_per_city(summary)
     rows = []
     for city, group in summary.groupby("city"):
         group = group.sort_values("cycle").reset_index(drop=True)
-        alpha = ALPHA_0.copy()
+        alpha = alpha_init_per_city[city].copy()
         for _, row in group.iterrows():
             # alpha here is the prior BEFORE observing this cycle
             probs = alpha / alpha.sum()

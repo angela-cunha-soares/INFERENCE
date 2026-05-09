@@ -1,0 +1,17 @@
+\begin{table}[!t]
+\centering
+\caption{Climatological sequential-forecast metrics across the 50 city $\times$ cycle combinations (2020/21--2024/25, 10 MATOPIBA hubs). Forecast initialised with the climatologically-informed Dirichlet prior of Section~\ref{sec:methods_forecast} ($\boldsymbol{\alpha}_{2020}$ = SPEI-tercile counts on 1961--2019 plus a uniform smoother of 1.0 per class) and updated sequentially after each observed cycle. CRPS is computed on the seasonal irrigation-depth distribution; coverage is the empirical fraction of realised values within the 90\\% credible interval (nominal: 0.90). CRPSS is the continuous-ranked-probability skill score against the naive climatological mean (positive = better than baseline).}
+\label{tab:forecast_seq}
+\begin{tabular}{lrr}
+\toprule
+Metric & Mean & Median \\
+\midrule
+CRPS$_{I_{\mathrm{total}}}$ (mm) & 20.63 & 18.18 \\
+Coverage$_{90,\mathrm{SW}}$ & 0.95 & 0.96 \\
+Coverage$_{90,I_{\mathrm{total}}}$ & 0.96 & 1.00 \\
+KGE$_{\mathrm{SW}}$ & -0.10 & -0.09 \\
+PIT $I_{\mathrm{total}}$ & 0.46 & 0.41 \\
+CRPSS vs.\ naive climatology & 0.03 & 0.04 \\
+\bottomrule
+\end{tabular}
+\end{table}

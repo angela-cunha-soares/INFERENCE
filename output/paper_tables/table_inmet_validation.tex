@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{Daily-scale validation of NASA POWER, Open-Meteo Archive and the EVAOnline-weighted fused product against INMET automatic stations in MATOPIBA, Jan--May 2026. Cells report RMSE; bold marks the source with the smallest RMSE in each row. The `Pooled' column aggregates across stations on the daily anomaly relative to each station's mean, so it reflects within-station agreement (immune to station-level offsets). Wind at 2\,m is reported with a dagger because $\geq70\%$ of hourly INMET anemometer readings register exactly $0$\,m/s, yielding a degenerate ground truth on a per-station basis (the pooled row on the anomaly removes that bias). Stations A402, A404 contributed fewer than 4 variables after QC and are absorbed into the pooled row only.}
+\label{tab:inmet-validation}
+\begin{tabular}{llrrrrrrrrrrrr}
+\toprule
+& & \multicolumn{3}{c}{Baixa Grande do Ribeiro} & \multicolumn{3}{c}{Correntina} & \multicolumn{3}{c}{Urucuí} & \multicolumn{3}{c}{Pooled} \\
+\cmidrule(lr){3-11} \cmidrule(lr){12-14}
+Variable & Source & NASA & Arch & Fused & NASA & Arch & Fused & NASA & Arch & Fused & NASA & Arch & Fused \\
+\midrule
+$T_\mathrm{max}$ ($^\circ$C) & RMSE & 2.71 & \textbf{1.51} & 1.77 & 1.61 & 2.38 & \textbf{1.50} & 2.02 & 2.13 & \textbf{1.59} & 1.81 & \textbf{1.23} & 1.41 \\
+$T_\mathrm{min}$ ($^\circ$C) & RMSE & 1.55 & \textbf{0.97} & 1.19 & 1.83 & \textbf{1.27} & 1.50 & 1.41 & \textbf{0.99} & 1.15 & 1.19 & \textbf{0.89} & 0.96 \\
+RH (\%) & RMSE & - & - & - & 17.78 & \textbf{11.98} & 13.81 & 7.06 & 5.26 & \textbf{4.64} & 6.10 & 4.78 & \textbf{4.72} \\
+$u_2$ (m\,s$^{-1}$)$^\dagger$ & RMSE & 1.66 & \textbf{1.60} & 1.60 & 0.94 & \textbf{0.78} & 0.80 & \textbf{1.72} & 1.89 & 1.85 & 0.49 & 0.49 & \textbf{0.46} \\
+$R_\mathrm{s}$ (MJ\,m$^{-2}$\,d$^{-1}$) & RMSE & 3.15 & 4.35 & \textbf{2.78} & 3.04 & 3.10 & \textbf{2.82} & 2.67 & 3.96 & \textbf{2.55} & 3.22 & 3.46 & \textbf{3.05} \\
+$P$ (mm\,d$^{-1}$) & RMSE & 10.14 & 10.38 & \textbf{9.95} & 6.03 & 7.02 & \textbf{4.15} & - & - & - & 8.41 & 8.57 & \textbf{7.92} \\
+ET$_0$ (mm\,d$^{-1}$) & RMSE & - & - & - & 0.86 & 0.82 & \textbf{0.68} & 1.02 & 1.11 & \textbf{0.94} & 0.60 & 0.58 & \textbf{0.54} \\
+\bottomrule
+\end{tabular}
+\end{table}

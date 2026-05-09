@@ -222,8 +222,8 @@ def plot_timeseries(ax, df: pd.DataFrame) -> None:
         )
 
     # Eixos e labels
-    ax.set_ylabel("MEI.v2 (índice padronizado)")
-    ax.set_xlabel("Ano")
+    ax.set_ylabel("MEI.v2 (standardized index)")
+    ax.set_xlabel("Year")
     ax.set_xlim(df["date"].min(), df["date"].max())
     ymin = min(-3, mei.min() - 0.3)
     ymax = max( 3, mei.max() + 0.3)
@@ -233,7 +233,7 @@ def plot_timeseries(ax, df: pd.DataFrame) -> None:
     ax.xaxis.set_minor_locator(mdates.YearLocator(1))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
 
-    ax.set_title("A. Série temporal MEI.v2 (1979-2025) — episódios ENSO mensais",
+    ax.set_title("A. MEI.v2 time series (1979–2025) — monthly ENSO events",
                  loc="left")
 
     # Legenda customizada
@@ -268,8 +268,8 @@ def plot_histogram(ax, df: pd.DataFrame) -> None:
     ax.axvline(-0.5, color="#777", linewidth=0.6, linestyle=":", alpha=0.7)
 
     ax.set_xlabel("MEI.v2")
-    ax.set_ylabel("Frequência (meses)")
-    ax.set_title("B. Distribuição", loc="left")
+    ax.set_ylabel("Frequency (months)")
+    ax.set_title("B. Distribution", loc="left")
 
     # Estatística sobreposta
     mu = mei.mean()
@@ -287,10 +287,10 @@ def plot_intensity_bars(ax, stats: dict) -> None:
     ln = stats["ln_intensity"]
     neutral = stats["n_neutral"]
 
-    categories = ["Muito\nforte\n(≥2.0)", "Forte\n(≥1.5)", "Moderada\n(≥1.0)",
-                  "Fraca\n(≥0.5)", "Neutro\n(<0.5)",
-                  "Fraca\n(≥0.5)", "Moderada\n(≥1.0)", "Forte\n(≥1.5)",
-                  "Muito\nforte\n(≥2.0)"]
+    categories = ["Very\nStrong\n(≥2.0)", "Strong\n(≥1.5)", "Moderate\n(≥1.0)",
+                  "Weak\n(≥0.5)", "Neutral\n(<0.5)",
+                  "Weak\n(≥0.5)", "Moderate\n(≥1.0)", "Strong\n(≥1.5)",
+                  "Very\nStrong\n(≥2.0)"]
     counts = [ln[3], ln[2], ln[1], ln[0], neutral, en[0], en[1], en[2], en[3]]
     colors = [COLOR_LA_NINA] * 4 + [COLOR_NEUTRAL] + [COLOR_EL_NINO] * 4
     alphas = [0.55, 0.70, 0.85, 1.00, 0.65, 1.00, 0.85, 0.70, 0.55]
@@ -309,7 +309,7 @@ def plot_intensity_bars(ax, stats: dict) -> None:
 
     ax.set_xticks(x)
     ax.set_xticklabels(categories, fontsize=7)
-    ax.set_ylabel("Número de meses")
+    ax.set_ylabel("NNumber of Months")
     ax.set_ylim(0, max(counts) * 1.18)
 
     # Faixas de fundo para indicar grupo
@@ -320,27 +320,27 @@ def plot_intensity_bars(ax, stats: dict) -> None:
     # Rótulos de grupo no topo
     ax.text(1.5, max(counts) * 1.13, "La Niña", ha="center",
             color=COLOR_LA_NINA, fontweight="bold", fontsize=9)
-    ax.text(4.0, max(counts) * 1.13, "Neutro", ha="center",
+    ax.text(4.0, max(counts) * 1.13, "Neutral", ha="center",
             color="#666", fontweight="bold", fontsize=9)
     ax.text(6.5, max(counts) * 1.13, "El Niño", ha="center",
             color=COLOR_EL_NINO, fontweight="bold", fontsize=9)
 
-    ax.set_title("C. Distribuição de meses por fase e intensidade", loc="left")
+    ax.set_title("C. Distribution of Months by Phase and Intensity", loc="left")
 
 
 def add_summary_text(fig, stats: dict) -> None:
     """Caixa de texto com resumo estatístico no canto inferior."""
     txt = (
-        f"Período analisado: {stats['date_min'].strftime('%b/%Y')} – "
-        f"{stats['date_max'].strftime('%b/%Y')}  ({stats['n_total']} meses, "
-        f"{stats['n_years']} anos)\n"
-        f"MEI mínimo: {stats['mei_min']:+.2f} "
+        f"Period analyzed: {stats['date_min'].strftime('%b/%Y')} – "
+        f"{stats['date_max'].strftime('%b/%Y')}  ({stats['n_total']} months, "
+        f"{stats['n_years']} years)\n"
+        f"Minimum MEI: {stats['mei_min']:+.2f} "
         f"({stats['date_min_event'].strftime('%b/%Y')}, La Niña 2010-11)    "
-        f"MEI máximo: {stats['mei_max']:+.2f} "
+        f"Maximum MEI: {stats['mei_max']:+.2f} "
         f"({stats['date_max_event'].strftime('%b/%Y')})\n"
-        f"El Niño: {stats['n_el_nino']} meses ({stats['pct_el_nino']:.1f}%)    "
-        f"La Niña: {stats['n_la_nina']} meses ({stats['pct_la_nina']:.1f}%)    "
-        f"Neutro: {stats['n_neutral']} meses ({stats['pct_neutral']:.1f}%)"
+        f"El Niño: {stats['n_el_nino']} months ({stats['pct_el_nino']:.1f}%)    "
+        f"La Niña: {stats['n_la_nina']} months ({stats['pct_la_nina']:.1f}%)    "
+        f"Neutral: {stats['n_neutral']} months ({stats['pct_neutral']:.1f}%)"
     )
     fig.text(0.5, 0.02, txt, ha="center", va="bottom", fontsize=8.5,
              color="#333",
@@ -371,7 +371,7 @@ def make_figure(df: pd.DataFrame, stats: dict) -> plt.Figure:
 
     # Título superior
     fig.suptitle(
-        "Multivariate ENSO Index (MEI.v2) — episódios El Niño, La Niña e neutros",
+        "Multivariate ENSO Index (MEI.v2) — El Niño, La Niña, and neutral episodes",
         fontsize=13, fontweight="bold", y=0.985,
     )
 
@@ -394,13 +394,13 @@ def main() -> None:
     stats = compute_stats(df)
 
     print(f"\nResumo:")
-    print(f"  Período           : {stats['date_min'].date()} → {stats['date_max'].date()}")
-    print(f"  Total de meses    : {stats['n_total']}")
-    print(f"  Meses El Niño     : {stats['n_el_nino']:4d}  ({stats['pct_el_nino']:.1f}%)")
-    print(f"  Meses La Niña     : {stats['n_la_nina']:4d}  ({stats['pct_la_nina']:.1f}%)")
-    print(f"  Meses neutros     : {stats['n_neutral']:4d}  ({stats['pct_neutral']:.1f}%)")
-    print(f"  MEI mínimo        : {stats['mei_min']:+.2f}  ({stats['date_min_event'].date()})")
-    print(f"  MEI máximo        : {stats['mei_max']:+.2f}  ({stats['date_max_event'].date()})")
+    print(f"  Period analyzed   : {stats['date_min'].date()} → {stats['date_max'].date()}")
+    print(f"  Total months      : {stats['n_total']}")
+    print(f"  El Niño months    : {stats['n_el_nino']:4d}  ({stats['pct_el_nino']:.1f}%)")
+    print(f"  La Niña months    : {stats['n_la_nina']:4d}  ({stats['pct_la_nina']:.1f}%)")
+    print(f"  Neutral months    : {stats['n_neutral']:4d}  ({stats['pct_neutral']:.1f}%)")
+    print(f"  Minimum MEI        : {stats['mei_min']:+.2f}  ({stats['date_min_event'].date()})")
+    print(f"  Maximum MEI        : {stats['mei_max']:+.2f}  ({stats['date_max_event'].date()})")
 
     print("\nGerando figura ...")
     fig = make_figure(df, stats)

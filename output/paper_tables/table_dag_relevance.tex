@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Variable-relevance ranking with respect to ETo derived from the consensus DAG learnt by hill-climbing search over the pooled 1961--2025 MATOPIBA daily series ($n=237,410$). Edges retained only when BDeu \citep{Buntine1991} and BIC \citep{Schwarz1978} scorers agree, with quantile binning at 5 bins per variable. ``Direct parent'' nodes point at ETo in the DAG; ``co-parent'' nodes share a child with ETo (Markov blanket); ``distal'' nodes are conditionally independent of ETo given the parents.}
+\label{tab:dag-relevance}
+\begin{tabular}{ll}
+\toprule
+Variable & Relation to ETo \\
+\midrule
+$R_{\mathrm{s}}$ & direct parent \\
+$T_{\mathrm{min}}$ & direct parent \\
+$u_2$ & direct parent \\
+$\overline{\mathrm{RH}}$ & direct child \\
+$T_{\mathrm{max}}$ & direct child \\
+$P$ & distal \\
+\bottomrule
+\end{tabular}
+\end{table}

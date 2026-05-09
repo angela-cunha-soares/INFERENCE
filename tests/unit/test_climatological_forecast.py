@@ -226,10 +226,21 @@ def test_sequential_forecast_alpha_grows(synthetic_history, soybean_profile):
     )
     # alpha trajectory: 3 entries (one per cycle) showing the prior used
     assert len(result.alpha_trajectory) == 3
-    np.testing.assert_allclose(result.alpha_trajectory[0], [1, 1, 1])
+    # alpha_0 is the informative climatological prior (default
+    # ``prior_from_climatology=True``): historical class counts 1961..2019
+    # plus a Laplace +1 smoother. Because the synthetic history rotates
+    # dry/normal/wet on a 3-year cycle starting in 1961, all three classes
+    # accumulate ≈19-20 observations across 59 historical years, so each
+    # alpha_0 component must sit comfortably above the uniform (1,1,1)
+    # value used before sessions ≥2026-05-06.
+    alpha_0 = np.asarray(result.alpha_trajectory[0])
+    assert (alpha_0 > 5).all(), (
+        f"alpha_0={alpha_0} appears uniform; expected climatological prior")
     # final posterior must have grown by the number of observed cycles
     n_obs = len(result.evaluations)
-    assert pytest.approx(result.final_posterior.alpha.sum() - 3) == n_obs
+    assert pytest.approx(
+        result.final_posterior.alpha.sum() - alpha_0.sum()
+    ) == n_obs
 
 
 def test_sequential_forecast_evaluations_have_metrics(synthetic_history, soybean_profile):

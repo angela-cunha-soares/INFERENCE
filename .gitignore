@@ -21,32 +21,35 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
-# Output files (regeneráveis pelo modelo)
-output/*.nc
-
-# Heavy raw data (manage out-of-band)
-data_raw/xavier/
-data_raw/soil_moisture/
-
 # Jupyter
 .ipynb_checkpoints/
+
+# Large / regenerable files
+output/*.nc
+notebooks/operational_irrigation_5day.ipynb
+
+# Cache and temporary
+output/inmet_validation/_cache/
+output/_exploratory/
+.pytest_cache/
+.ruff_cache/
+temp/
+*.log
+
+# Heavy raw data (não versionar)
+data_raw/
+
+# Specific large files (redundante se usar data_raw/, mas ok manter)
+data_raw/shapefile/
+figures/paper/study_area_map.pdf
+
+# Claude (arquivos locais)
+.claude/
+
+# GitHub
+.github/
 
 # Distribution
 *.egg-info/
 dist/
 build/
-
-# pytest / coverage
-.pytest_cache/
-.coverage
-htmlcov/
-.ruff_cache/
-
-# Temp directory used during refactoring
-temp/
-
-# Misc
-*.log
-
-# Misc
-*.log

@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Sampling diagnostics for the Bayesian state-space model (Section~\ref{sec:methods_pymc}) across the five posterior-recovery cycles. NUTS \citep{Hoffman2014} draws 4 chain $\times$ 600 post-warm-up samples per cycle. Posterior mean $\pm$ posterior s.d. is averaged across the five cycles; $\hat{R}$ and ESS are reported as the worst-case value across all cycles to expose any single-cycle degradation. All $\hat{R} < 1.05$ and ESS$_{\mathrm{bulk}} > 100$ satisfy the convergence thresholds recommended by \citet{Vehtari2021}.}
+\label{tab:mcmc-diagnostics}
+\begin{tabular}{lrrrrrr}
+\toprule
+Parameter & Posterior mean & Post.\ s.d. & $\hat{R}_\mathrm{max}$ & ESS$_\mathrm{bulk,min}$ & ESS$_\mathrm{tail,min}$ & Divergences \\
+\midrule
+$\theta_s$ & 0.419 & 0.002 & 1.005 & 1284 & 1033 & 0 \\
+$\theta_r$ & 0.098 & 0.020 & 1.004 & 1852 & 1178 & 0 \\
+$K_{c,\mathrm{mult}}$ & 1.201 & 0.014 & 1.005 & 1028 & 892 & 0 \\
+$\theta_\mathrm{init}$ & 0.249 & 0.002 & 1.002 & 1169 & 1181 & 0 \\
+$\sigma_\mathrm{obs}$ & 0.008 & 0.001 & 1.002 & 1539 & 1566 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}

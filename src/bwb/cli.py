@@ -195,8 +195,13 @@ def cmd_forecast_sequential(args: argparse.Namespace) -> int:
     if args.alpha_init_from and Path(args.alpha_init_from).exists():
         alpha_init = np.array(json.loads(Path(args.alpha_init_from).read_text()))
         print(f"  Initial alpha loaded from {args.alpha_init_from}: {alpha_init.tolist()}")
-    else:
+    elif args.uniform_prior:
         alpha_init = np.ones(3, dtype=float)
+        print(f"  Initial alpha (uniform fallback): {alpha_init.tolist()}")
+    else:
+        # None -> run_sequential_forecast uses prior_from_climatology=True
+        alpha_init = None
+        print("  Initial alpha: from climatology 1961-(target-1) (default)")
 
     print("=" * 72)
     print(" Climatological Bayesian forecast (sequential)")
@@ -206,7 +211,7 @@ def cmd_forecast_sequential(args: argparse.Namespace) -> int:
     print(f" Target cycles    : {target_years}")
     print(f" Classification   : {args.method}")
     print(f" Simulations/cycle: {args.n_sim}")
-    print(f" Initial alpha    : {alpha_init.tolist()}")
+    print(f" Initial alpha    : {alpha_init.tolist() if alpha_init is not None else 'climatology(1961..t-1)+1'}")
     print(f" Output dir       : {out_dir}")
     print()
 
@@ -277,6 +282,195 @@ def cmd_forecast_sequential(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_forecast_operational(args: argparse.Namespace) -> int:
+    """Single rolling H-day operational forecast at a given date."""
+    import json
+
+    import numpy as np
+    import pandas as pd
+
+    from bwb.config.profiles import load_profile
+    from bwb.data.adapters import build_kc_curve, get_awc_for_city
+    from bwb.data.loaders import load_city_series
+    from bwb.forecast.rolling import rolling_5day_forecast
+
+    profile = load_profile(args.profile)
+    df = load_city_series(args.city)
+    kc = build_kc_curve(profile, n_days=int(profile["crop"]["cycle_days"]))
+    awc = get_awc_for_city(profile, args.city)
+
+    alpha = None
+    if args.alpha_from_sequential and Path(args.alpha_from_sequential).exists():
+        alpha = np.array(json.loads(Path(args.alpha_from_sequential).read_text()))
+
+    rf = rolling_5day_forecast(
+        df,
+        planting_date=pd.Timestamp(args.planting_date),
+        forecast_date=pd.Timestamp(args.forecast_date),
+        kc_curve=kc, awc_mm=awc,
+        cycle_days=int(profile["crop"]["cycle_days"]),
+        horizon_days=args.horizon,
+        mad=float(profile["crop"].get("mad", 0.55)),
+        alpha=alpha,
+        n_simulations=args.n_sim,
+        random_seed=args.seed,
+    )
+
+    print("=" * 72)
+    print(f" Rolling {args.horizon}-day forecast — {args.city}")
+    print("=" * 72)
+    print(f" Cycle:      planting {rf.planting_date.date()}, "
+          f"forecast {rf.forecast_date.date()} (day {rf.day_of_cycle} of cycle)")
+    print(f" Soil:       AWC = {rf.awc_mm:.1f} mm")
+    print(f" State today:")
+    print(f"   SW(today)         = {rf.SW_today_mm:.1f} mm  "
+          f"({100 * rf.SW_today_mm / rf.awc_mm:.0f}% of AWC)")
+    print(f"   I_to_date         = {rf.I_to_date_mm:.1f} mm")
+    print()
+    print(" Forecast tomorrow:")
+    print(f"   P(I > 0)              = {rf.p_irrigate_tomorrow:.0%}")
+    print(f"   I  q05/q50/q95 (mm)  = {rf.I_tomorrow_q05:.1f}  "
+          f"{rf.I_tomorrow_q50:.1f}  {rf.I_tomorrow_q95:.1f}")
+    print(f" Forecast cumulative {args.horizon}-day:")
+    print(f"   I_total q05/q50/q95  = {rf.I_total_horizon_q05:.1f}  "
+          f"{rf.I_total_horizon_q50:.1f}  {rf.I_total_horizon_q95:.1f} mm")
+    if rf.obs_I_total_horizon is not None:
+        within = (rf.I_total_horizon_q05 <= rf.obs_I_total_horizon
+                  <= rf.I_total_horizon_q95)
+        print()
+        print(" Verification (Xavier observation in horizon):")
+        print(f"   Observed I_total    = {rf.obs_I_total_horizon:.1f} mm")
+        print(f"   CRPS                = {rf.crps_I_total:.2f}")
+        print(f"   In 90% CI?          = {within}")
+
+    if args.output:
+        out_path = Path(args.output)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "city": args.city,
+            "planting_date": str(rf.planting_date.date()),
+            "forecast_date": str(rf.forecast_date.date()),
+            "day_of_cycle": rf.day_of_cycle,
+            "horizon_days": rf.horizon_days,
+            "awc_mm": rf.awc_mm,
+            "SW_today_mm": rf.SW_today_mm,
+            "I_to_date_mm": rf.I_to_date_mm,
+            "p_irrigate_tomorrow": rf.p_irrigate_tomorrow,
+            "I_tomorrow_q05_q50_q95": [
+                rf.I_tomorrow_q05, rf.I_tomorrow_q50, rf.I_tomorrow_q95,
+            ],
+            "I_total_horizon_q05_q50_q95": [
+                rf.I_total_horizon_q05, rf.I_total_horizon_q50,
+                rf.I_total_horizon_q95,
+            ],
+            "obs_I_total_horizon": rf.obs_I_total_horizon,
+            "crps_I_total": rf.crps_I_total,
+            "metadata": rf.metadata,
+        }
+        out_path.write_text(json.dumps(payload, indent=2))
+        print(f" -> wrote {out_path}")
+    return 0
+
+
+def cmd_backtest_rolling(args: argparse.Namespace) -> int:
+    """Roll the operational forecast across many days for verification."""
+    import json
+    import time
+
+    import numpy as np
+    import pandas as pd
+
+    from bwb.config.profiles import load_profile
+    from bwb.data.adapters import build_kc_curve, get_awc_for_city
+    from bwb.data.loaders import list_available_cities, load_city_series
+    from bwb.forecast.rolling import rolling_5day_forecast
+
+    profile = load_profile(args.profile)
+    cities = args.cities or list_available_cities()
+    out_dir = Path(args.output_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cycle_days = int(profile["crop"]["cycle_days"])
+    crop = profile["crop"]
+    plant_m, plant_d = int(crop["planting_month"]), int(crop["planting_day"])
+    mad = float(crop.get("mad", 0.55))
+
+    print("=" * 72)
+    print(f" Rolling {args.horizon}-day backtest")
+    print("=" * 72)
+    print(f"  Cities: {len(cities)} -> {cities[:3]}{'...' if len(cities) > 3 else ''}")
+    print(f"  Cycles: {args.cycles}")
+    print(f"  Step  : every {args.step} day(s)")
+    print(f"  Sims  : {args.n_sim}/forecast")
+    print()
+
+    rows = []
+    t0 = time.time()
+    for city in cities:
+        df = load_city_series(city)
+        kc = build_kc_curve(profile, n_days=cycle_days)
+        awc = get_awc_for_city(profile, city)
+        for cycle_year in args.cycles:
+            planting = pd.Timestamp(year=cycle_year, month=plant_m, day=plant_d)
+            # forecast at every day of cycle from day 0 to (cycle_days - horizon - 1)
+            for d in range(0, cycle_days - args.horizon, args.step):
+                forecast_date = planting + pd.Timedelta(days=d)
+                try:
+                    rf = rolling_5day_forecast(
+                        df, planting_date=planting,
+                        forecast_date=forecast_date,
+                        kc_curve=kc, awc_mm=awc,
+                        cycle_days=cycle_days,
+                        horizon_days=args.horizon,
+                        mad=mad,
+                        n_simulations=args.n_sim,
+                        random_seed=args.seed + d,
+                    )
+                except Exception as e:
+                    print(f"  [skip] {city} {cycle_year} day {d}: {e}")
+                    continue
+                rows.append({
+                    "city": city,
+                    "cycle_year": cycle_year,
+                    "forecast_date": str(rf.forecast_date.date()),
+                    "day_of_cycle": rf.day_of_cycle,
+                    "SW_today_mm": rf.SW_today_mm,
+                    "I_tomorrow_q50": rf.I_tomorrow_q50,
+                    "I_tomorrow_q05": rf.I_tomorrow_q05,
+                    "I_tomorrow_q95": rf.I_tomorrow_q95,
+                    "p_irrigate_tomorrow": rf.p_irrigate_tomorrow,
+                    "I_total_q05": rf.I_total_horizon_q05,
+                    "I_total_q50": rf.I_total_horizon_q50,
+                    "I_total_q95": rf.I_total_horizon_q95,
+                    "obs_I_total": rf.obs_I_total_horizon,
+                    "crps_I_total": rf.crps_I_total,
+                    "in_90ci": (rf.obs_I_total_horizon is not None and
+                                rf.I_total_horizon_q05 <= rf.obs_I_total_horizon
+                                <= rf.I_total_horizon_q95),
+                })
+        elapsed = time.time() - t0
+        n_done = sum(1 for r in rows if r["city"] == city)
+        print(f"  {city:30s}: {n_done} forecasts  ({elapsed:.0f}s elapsed)")
+
+    if rows:
+        out = pd.DataFrame(rows)
+        csv = out_dir / f"backtest_rolling_h{args.horizon}d.csv"
+        out.to_csv(csv, index=False)
+        print()
+        print(f"Wrote {len(out)} forecasts -> {csv}")
+        print()
+        print("=== Summary ===")
+        print(f"  CRPS I_total mean   = {out['crps_I_total'].mean():.2f} mm")
+        print(f"  CRPS I_total median = {out['crps_I_total'].median():.2f} mm")
+        print(f"  Coverage 90 IC      = {out['in_90ci'].mean():.1%}")
+        sub = out[out['obs_I_total'].notna()]
+        if len(sub):
+            mae = (sub['I_total_q50'] - sub['obs_I_total']).abs().mean()
+            print(f"  MAE  I_total_q50    = {mae:.2f} mm")
+            bias = (sub['I_total_q50'] - sub['obs_I_total']).mean()
+            print(f"  Bias I_total_q50    = {bias:+.2f} mm")
+    return 0
+
+
 def cmd_figures(args: argparse.Namespace) -> int:
     from runpy import run_path
     script = Path(__file__).resolve().parents[2] / "scripts" / "generate_paper_figures.py"
@@ -335,10 +529,60 @@ def _build_parser() -> argparse.ArgumentParser:
                     help="Monte-Carlo simulations per cycle (default: 500)")
     sp.add_argument("--alpha-init-from", default=None,
                     help="Path to JSON list with initial Dirichlet alpha "
-                         "(default: uniform [1, 1, 1])")
+                         "(overrides default climatological prior)")
+    sp.add_argument("--uniform-prior", action="store_true",
+                    help="Force uniform Dir(1,1,1) instead of the default "
+                         "climatologically-informed prior. Use only for "
+                         "ablation studies / reproducing legacy results.")
     sp.add_argument("--output-dir", default="output/forecast_sequential")
     sp.add_argument("--seed", type=int, default=42)
     sp.set_defaults(func=cmd_forecast_sequential)
+
+    sp = sub.add_parser(
+        "forecast-operational",
+        help="Rolling H-day operational irrigation forecast at a given date",
+    )
+    sp.add_argument("--city", required=True,
+                    help="City name (e.g. Balsas) — must exist in matopiba data")
+    sp.add_argument("--planting-date", required=True,
+                    help="Planting date YYYY-MM-DD")
+    sp.add_argument("--forecast-date", required=True,
+                    help='Forecast date "today" (YYYY-MM-DD). May be in the past '
+                         "(backtest mode against Xavier obs) or in the future.")
+    sp.add_argument("--horizon", type=int, default=5,
+                    help="Forecast horizon in days (default 5)")
+    sp.add_argument("--profile", default="matopiba")
+    sp.add_argument("--n-sim", type=int, default=500)
+    sp.add_argument("--alpha-from-sequential", default=None,
+                    help="Path to alpha_final_<city>.json from a previous "
+                         "run_sequential_forecast run, to use as prior. "
+                         "Default: rebuild from local climatology.")
+    sp.add_argument("--seed", type=int, default=42)
+    sp.add_argument("--output", default=None,
+                    help="Optional JSON output path with full distribution arrays")
+    sp.set_defaults(func=cmd_forecast_operational)
+
+    sp = sub.add_parser(
+        "backtest-rolling",
+        help="Roll the operational H-day forecast across all days of all cycles "
+             "for verification against Xavier observed water balance.",
+    )
+    sp.add_argument("--cities", nargs="+", default=None,
+                    help="Cities to backtest (default: all available)")
+    sp.add_argument("--cycles", nargs="+", type=int,
+                    default=[2020, 2021, 2022, 2023, 2024])
+    sp.add_argument("--horizon", type=int, default=5)
+    sp.add_argument("--step", type=int, default=1,
+                    help="Day step between successive forecasts (default 1, "
+                         "i.e. one forecast per day of cycle)")
+    sp.add_argument("--profile", default="matopiba")
+    sp.add_argument("--n-sim", type=int, default=200,
+                    help="Monte-Carlo sims per forecast (default 200, "
+                         "lower than the cycle-level forecast since we make "
+                         "many more forecasts in backtest)")
+    sp.add_argument("--output-dir", default="output/backtest_rolling")
+    sp.add_argument("--seed", type=int, default=42)
+    sp.set_defaults(func=cmd_backtest_rolling)
 
     sp = sub.add_parser("sensitivity", help="Run Sobol' sensitivity analysis")
     sp.add_argument("--city", default="Balsas")

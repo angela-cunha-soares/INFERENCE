@@ -18,7 +18,32 @@
       "Bash(python -c \"import urllib.request, struct; print\\('stdlib ok'\\)\")",
       "Bash(python scripts/download_atlantic_indices.py --skip-existing)",
       "Bash(python -c ' *)",
-      "Bash(python scripts/generate_paper_methods_tables.py)"
+      "Bash(python scripts/generate_paper_methods_tables.py)",
+      "Bash(bwb forecast-sequential *)",
+      "Bash(bwb forecast-operational *)",
+      "Bash(bwb backtest-rolling *)",
+      "Bash(python -c \"import ipywidgets\")",
+      "Bash(python -c \"import jupyter\")",
+      "Bash(python scripts/analyze_backtest_rolling.py)",
+      "Bash(python scripts/generate_paper_figures.py --no-pdf)",
+      "Bash(python scripts/generate_methodology_flowchart.py)",
+      "Bash(powershell -NoProfile -Command \"Get-Content 'C:\\\\Users\\\\User\\\\.claude\\\\projects\\\\c--Users-User-OneDrive-Documentos-GitHub-INFERENCE\\\\68cc14c5-97a8-4621-911f-53fe8913248e.jsonl' | Select-Object -Last 30\")",
+      "PowerShell($lines = Get-Content 'C:\\\\Users\\\\User\\\\.claude\\\\projects\\\\c--Users-User-OneDrive-Documentos-GitHub-INFERENCE\\\\68cc14c5-97a8-4621-911f-53fe8913248e.jsonl' -Tail 10; $lines | ForEach-Object { $_.Substring\\(0, [Math]::Min\\(500, $_.Length\\)\\) })",
+      "PowerShell($lines = Get-Content 'C:\\\\Users\\\\User\\\\.claude\\\\projects\\\\c--Users-User-OneDrive-Documentos-GitHub-INFERENCE\\\\68cc14c5-97a8-4621-911f-53fe8913248e.jsonl' -Tail 50; $lines | Select-Object -First 25 | ForEach-Object { $_.Substring\\(0, [Math]::Min\\(800, $_.Length\\)\\) })",
+      "PowerShell($lines = Get-Content 'C:\\\\Users\\\\User\\\\.claude\\\\projects\\\\c--Users-User-OneDrive-Documentos-GitHub-INFERENCE\\\\68cc14c5-97a8-4621-911f-53fe8913248e.jsonl' -Tail 80; $out = $lines | Select-Object -First 20 | ForEach-Object { $_.Substring\\(0, [Math]::Min\\(1500, $_.Length\\)\\) }; $out -join \"`n---LINE---`n\")",
+      "PowerShell($lines = Get-Content 'C:\\\\Users\\\\User\\\\.claude\\\\projects\\\\c--Users-User-OneDrive-Documentos-GitHub-INFERENCE\\\\68cc14c5-97a8-4621-911f-53fe8913248e.jsonl' -Tail 60; foreach \\($i in 0..15\\) { Write-Output \"===L$i===`n$\\($lines[$i].Substring\\(0, [Math]::Min\\(1200, $lines[$i].Length\\)\\)\\)\" })",
+      "Bash(tail -c 200000 \"C:/Users/User/.claude/projects/c--Users-User-OneDrive-Documentos-GitHub-INFERENCE/68cc14c5-97a8-4621-911f-53fe8913248e.jsonl\" | head -c 50000)",
+      "Read(//c/Users/User/.claude/projects/c--Users-User-OneDrive-Documentos-GitHub-INFERENCE/**)",
+      "Bash(grep -oE '\"text\":\"[^\"]{50,2000}\"')",
+      "Bash(grep -oE '\"text\":\"[^\"\\\\\\\\]{40,3000}\"' \"C:/Users/User/.claude/projects/c--Users-User-OneDrive-Documentos-GitHub-INFERENCE/68cc14c5-97a8-4621-911f-53fe8913248e.jsonl\")",
+      "Bash(gh repo *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(python -c \"from bwb.data.sources.climate import download_nasa_power; print\\('OK import'\\)\")",
+      "Bash(python -m pytest tests/unit/test_nasa_power.py -v)",
+      "Bash(python -m pytest tests/unit -q -m \"not slow\")",
+      "Bash(python -m pytest tests/unit/test_climate_fusion.py tests/unit/test_nasa_power.py -v)",
+      "Bash(python -m pytest tests/unit/test_climate_fusion.py tests/unit/test_nasa_power.py -q)"
     ]
   }
 }

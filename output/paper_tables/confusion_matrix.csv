@@ -1,4 +1,4 @@
 ,pred_dry,pred_normal,pred_wet
-obs_dry,5,2,4
-obs_normal,9,7,2
-obs_wet,4,14,3
+obs_dry,5,1,5
+obs_normal,9,1,8
+obs_wet,13,3,5

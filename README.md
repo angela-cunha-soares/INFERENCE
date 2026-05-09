@@ -115,6 +115,11 @@ regenerate the processed artefacts when the raw inputs are refreshed.
 
 ## Validation snapshot
 
+The framework provides three complementary validation modes (A, B, C
+below).
+
+### A. Posterior-recovery test (150 combinations)
+
 Full retrospective grid: **10 cities x 3 root depths x 5 crop cycles =
 150 combinations**, all converged. Run `bwb validate` (or
 `scripts/analyze_validation.py` for the post-hoc summary).
@@ -135,6 +140,38 @@ Aggregate metrics across the 150 successful fits:
 
 *All 150 combinations converged with R-hat below 1.05; coverage of the
 90% credible interval is well calibrated to nominal.*
+
+### B. Climatological sequential forecast (50 combinations)
+
+Strictly causal forecast (training on 1961..c-1, evaluation on cycle c)
+across **10 cities x 5 cycles (2020/21..2024/25) = 50 combinations**,
+initialised with a climatologically-informed Dirichlet prior on the
+SPEI-tercile counts of the 1961-2019 training window plus a unit
+smoother. Run `bwb forecast-sequential --n-sim 500` or
+`python scripts/generate_forecast_seq_tables.py` for the LaTeX tables.
+
+Aggregate skill across the 50 forecast cycles:
+
+| metric                                | mean  | median |
+| ------------------------------------- | ----- | ------ |
+| CRPS on seasonal irrigation (mm)      | 20.63 | 18.18  |
+| Coverage_90 daily soil-water content  | 0.954 | 0.956  |
+| Coverage_90 seasonal irrigation depth | 0.96  | 1.00   |
+| KGE on daily soil-water content       | -0.10 | -0.09  |
+| PIT on seasonal irrigation depth      | 0.46  | 0.41   |
+| CRPSS vs naive climatological mean    | +0.03 | +0.04  |
+
+*Climatological forecast intervals are conservatively calibrated; the
+KGE on the daily trajectory is negative by design (a climatological
+forecast does not aim to predict the realised daily sequence).*
+
+### C. Operational rolling 5-day forecast (4,250 forecasts)
+
+Per-city verification of `bwb backtest-rolling` against the FAO-56
+deterministic baseline (Xavier observed P and ETo) across day 0
+through day 84 of the five 2020-2024 cycles for the ten MATOPIBA hubs:
+**N = 4,250 forecasts** in aggregate. Median KGE +0.32, mean CRPS
+2.65 mm, coverage_90 = 0.970.
 
 ## Citation
 

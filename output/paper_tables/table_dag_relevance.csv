@@ -1,0 +1,7 @@
+variable,relation,rank
+Rs,direct parent,1
+Tmin,direct parent,1
+u2,direct parent,1
+RH,direct child,2
+Tmax,direct child,2
+pr,distal,4

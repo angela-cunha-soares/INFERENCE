@@ -626,6 +626,7 @@ class SequentialResult:
     evaluations: dict[int, CycleEvaluation] = field(default_factory=dict)
     alpha_trajectory: list[np.ndarray] = field(default_factory=list)
     final_posterior: Optional[DirichletPosterior] = None
+    alpha_init_source: str = ""
 
 
 def run_sequential_forecast(
@@ -635,6 +636,8 @@ def run_sequential_forecast(
     profile: dict,
     city: str = "",
     alpha_init: Optional[np.ndarray] = None,
+    prior_from_climatology: bool = True,
+    climatological_smoother: float = 1.0,
     method: str = "spei",
     n_simulations: int = 500,
     random_seed: Optional[int] = 42,
@@ -656,9 +659,23 @@ def run_sequential_forecast(
     profile : dict
         Regional profile.
     city : str
-        Annotation only.
+        Annotation only (passed to forecast_cycle for per-city AWC lookup).
     alpha_init : array (3,), optional
-        Initial Dirichlet prior (default uniform Dir(1, 1, 1)).
+        Initial Dirichlet prior. If ``None`` and ``prior_from_climatology`` is
+        True (default), the prior is informed by the SPEI class counts of the
+        full climatological history 1961..(min(target_years)-1). Otherwise
+        falls back to uniform Dir(1, 1, 1).
+    prior_from_climatology : bool, default True
+        When True (and ``alpha_init`` is None), set the initial Dirichlet
+        prior to ``climatological_smoother + class_counts(1961..t-1)``. This
+        gives the classifier ~60 prior observations of historical SPEI
+        terciles instead of the 5 observations from the test years alone,
+        which is the difference between a near-uninformative prior and a
+        properly Bayesian one. Disable to recover the legacy uniform prior.
+    climatological_smoother : float, default 1.0
+        Additive smoother applied to each component of the climatological
+        counts (Laplace-type prior on the prior; prevents zero counts when
+        a tercile is unrepresented in the training set).
     method : {'spei', 'tercile'}
     n_simulations : int
     random_seed : int, optional
@@ -668,13 +685,8 @@ def run_sequential_forecast(
     -------
     SequentialResult
     """
-    if alpha_init is None:
-        alpha_init = np.ones(N_CLASSES, dtype=float)
-
     target_years = list(target_years)
     result = SequentialResult(city=city, target_years=target_years)
-
-    alpha = np.asarray(alpha_init, dtype=float).copy()
     crop = profile["crop"]
     cycle_days = int(crop["cycle_days"])
     planting_month = int(crop["planting_month"])
@@ -682,6 +694,41 @@ def run_sequential_forecast(
 
     historical_df = historical_df.copy()
     historical_df["date"] = pd.to_datetime(historical_df["date"])
+
+    # Initial Dirichlet prior:
+    # - explicit alpha_init wins
+    # - else, climatological-informed prior (default; preferred for paper)
+    # - else uniform Dir(1, 1, 1) fallback
+    if alpha_init is None and prior_from_climatology:
+        first_target = min(target_years)
+        clim_stats, _ = extract_historical_seasons(
+            historical_df,
+            planting_month=planting_month,
+            planting_day=planting_day,
+            cycle_days=cycle_days,
+            until_year_exclusive=first_target,
+        )
+        clim_classes, _meta = classify_seasons(clim_stats, method=method)
+        counts_clim = np.array([
+            sum(1 for k in clim_classes.values() if k == cls)
+            for cls in range(N_CLASSES)
+        ], dtype=float)
+        alpha_init = counts_clim + float(climatological_smoother)
+        result.alpha_init_source = (
+            f"climatology(1961-{first_target - 1}, n={len(clim_classes)}) + "
+            f"smoother {climatological_smoother:g}; "
+            f"counts {counts_clim.astype(int).tolist()} -> "
+            f"alpha_init {alpha_init.tolist()}"
+        )
+    elif alpha_init is None:
+        alpha_init = np.ones(N_CLASSES, dtype=float)
+        result.alpha_init_source = "uniform Dir(1, 1, 1)"
+    else:
+        result.alpha_init_source = (
+            f"user-provided alpha_init {np.asarray(alpha_init).tolist()}"
+        )
+
+    alpha = np.asarray(alpha_init, dtype=float).copy()
 
     for c in target_years:
         result.alpha_trajectory.append(alpha.copy())
@@ -713,7 +760,7 @@ def run_sequential_forecast(
 
             # Compute baselines and CRPS skill scores
             try:
-                from bwb.data.adapters import build_kc_curve
+                from bwb.data.adapters import build_kc_curve, get_awc_for_city
                 from bwb.forecast.baselines import (
                     crps_skill_score, evaluate_baselines_for_cycle,
                 )

@@ -1,23 +1,32 @@
 # Methodology
 
 This page documents the design choices that justify the headline numbers
-reported in the README. Read it alongside [`limitations.md`](limitations.md).
+reported in the README. Read it alongside [`limitations.md`](limitations.md)
+and [`methodology_diagram.md`](methodology_diagram.md).
 
-## Two complementary uses of the framework
+## Three complementary validation modes
 
-The bwb framework supports **two distinct uses** that should not be confused:
+The bwb framework supports **three distinct validation modes** that should
+not be confused. Each answers a different question and is exposed as a
+separate CLI subcommand.
 
-| Use | CLI command | Purpose | Reference |
+| Mode | CLI command | Purpose | What it answers |
 |---|---|---|---|
-| **Posterior-recovery test** | `bwb posterior-recovery` (legacy: `validate`) | Internal consistency: does the Bayesian model recover the parameters that generated the FAO-56 reference trajectory? | (none -- self-test) |
-| **Climatological sequential forecast** | `bwb forecast-sequential` | Production validation against Xavier reanalysis. Forecast each cycle using only past climatology, then update the prior with the realised cycle. | (this section) |
+| **A. Posterior-recovery test** | `bwb posterior-recovery` (legacy: `validate`) | Internal consistency. The Bayesian model is given a synthetic FAO-56 trajectory and must recover the parameters that generated it. | "Does the PyMC implementation reproduce the FAO-56 process within calibrated uncertainty?" |
+| **B. Climatological sequential forecast** | `bwb forecast-sequential` | Strictly causal seasonal forecast (training on 1961..c-1, forecast on cycle c). | "What is the seasonal irrigation distribution before any data from cycle c is observed?" |
+| **C. Operational rolling 5-day forecast** | `bwb backtest-rolling` | 5-day-ahead probabilistic forecast of cumulative irrigation depth from any day-of-cycle. | "How much irrigation will the crop need over the next 5 days, with what credible interval?" |
 
-The headline 150-combination KGE = 0.91 reported earlier comes from the
-**posterior-recovery test** -- it verifies that the PyMC implementation
-faithfully reproduces FAO-56 behaviour. It is not a forecast skill score.
+The headline 150-combination KGE = 0.918 (median) and 90% coverage = 0.922
+come from mode **A**: it verifies that the PyMC implementation faithfully
+reproduces FAO-56 behaviour. It is not a forecast skill score.
 
-The numbers that should be quoted in the manuscript as **predictive skill**
-are produced by `bwb forecast-sequential`, described below.
+The headline forecast skill scores (mean CRPS = 20.6 mm, coverage = 0.954,
+CRPSS = +0.034 against the naive climatology) come from mode **B**, which
+is the production validation against Xavier reanalysis.
+
+The headline operational scores (median KGE = +0.32, mean CRPS = 2.65 mm,
+coverage = 0.970) come from mode **C**, which is the deployment-facing
+mode for day-to-day decisions.
 
 ## Process layer (FAO-56 daily water balance)
 
@@ -83,10 +92,22 @@ quantile classification of Pinkayan (1966) and Xavier et al. (2002).
 ### Step 3 -- Conjugate Dirichlet-Multinomial update
 
 ```
-prior:      Dir(alpha_c)                       # initialised Dir(1, 1, 1)
+prior:      Dir(alpha_c)                       # default: climatologically-informed
+                                               # alpha_c = n_(1961-2019) + 1 (smoother)
+                                               # ablation: Dir(1, 1, 1) uniform
 counts:     n_dry, n_normal, n_wet of training cycles
 posterior:  Dir(alpha_c + n_counts)            # closed-form, no MCMC needed
 ```
+
+The default initial hyperparameter is the **climatologically-informed**
+prior `alpha_2020 = n_(1961-2019) + 1` (typically `n ≈ (20, 20, 19)` by
+construction of equal-frequency terciles). The uniform-prior variant
+`alpha_2020 = (1, 1, 1)` is exposed for ablation purposes through
+`--alpha-init 1 1 1`; on the 50-combination validation grid it inflates
+the median CRPS from 18.2 mm to ≈ 23 mm because the five available target
+cycles are not enough to refine an uninformative posterior. The choice of
+prior is therefore non-trivial and is documented in the manuscript
+Discussion (Section "The role of the priors in the reported skill").
 
 ### Step 4 -- Monte-Carlo forecast
 
@@ -151,25 +172,84 @@ To validate in a new region, create `<region>.toml` with city
 coordinates, planting calendar and soil texture; the rest of the
 pipeline is region-agnostic.
 
+## DAG learning over the climate inputs
+
+In addition to the FAO-56 process layer, the framework exposes a
+data-driven Bayesian-network learner
+(`bwb.inference.dag_learning`) that recovers the conditional-dependency
+structure between the daily climate variables (Tmax, Tmin, Tmean, RH,
+u2, Rs, P) and ETo. The methodological precedent is Ribeiro et al.
+(IJCNN 2022), who learnt a Bayesian network for ETo over five INMET
+stations of MATOPIBA and identified u2 and minimum relative humidity as
+parents of ETo. We adopt the same toolchain (HillClimb + BDeu via
+[`pgmpy`](https://pgmpy.org)), broaden the input set and the population
+(pooled 65-year Xavier reanalysis across the ten MATOPIBA hubs,
+n ≈ 237,410), and require **agreement between BDeu and BIC scorers** on
+the consensus graph. The recovered direct parents of ETo are
+`{R_s, T_min, u_2}`, with `P` correctly identified as conditionally
+independent of ETo.
+
+Run with: `python scripts/learn_climate_dag.py`. Outputs in
+`figures/paper/fig_climate_dag.png` and
+`output/paper_tables/table_dag_relevance.{csv,tex}`.
+
+## ENSO-conditioned dynamic Bayesian network
+
+The Dirichlet posterior of the cycle-level forecast treats yearly class
+draws as exchangeable. To encode the dependency on the El Niño/Southern
+Oscillation regime, the framework also exposes a dynamic Bayesian
+network (`bwb.models.dbn_ensoclass`) in which the season class depends
+on the seasonal ENSO regime classified from the 3-month running ONI.
+Sampled with NUTS (4 chains, 1,000 draws). The ENSO conditioning
+sharpens the dry-class probability under El Niño from the static 0.34 to
+0.38 and shifts the neutral regime towards the wet class.
+
+Run with: `python scripts/fit_dbn_enso.py`. Outputs in
+`output/state_space/trace_dbn_enso.nc`,
+`figures/paper/fig_dbn_enso.png`, and
+`output/paper_tables/table_dbn_enso.{csv,tex}`.
+
+## Operational fused climate product
+
+Because the curated Xavier reanalysis is not updated in real time, the
+operational deployment substitutes a **multi-source fused product**
+combining NASA POWER (MERRA-2), Open-Meteo Archive (ERA5), and
+Open-Meteo Forecast (best-match NWP). Per-variable weights are
+calibrated against BR-DWGD at 17 Brazilian sites and validated against
+in-situ INMET automatic stations on the MATOPIBA hubs (see
+`docs/methodology_diagram.md` and the manuscript Appendix A). ETo is
+recomputed by Penman-Monteith on the fused inputs rather than averaged
+from the per-source ETo.
+
+Modules: `bwb.data.sources.climate.{nasa_power, openmeteo, fusion}`.
+
 ## Reproducibility
 
 ```bash
 python -m pip install -e ".[parallel]"
 
-# Posterior-recovery test (internal consistency)
+# A. Posterior-recovery test (internal consistency, 150 combinations)
 bwb posterior-recovery
 
-# Production validation: sequential forecast 2020..2024
+# B. Production validation: sequential forecast 2020..2024
 bwb forecast-sequential --cities Balsas Barreiras --cycles 2020 2021 2022 2023 2024
 
-# Operational forecast 2025/26 using the alpha posterior from above
+# B'. Operational forecast 2025/26 using the alpha posterior from above
 bwb forecast-sequential --cycles 2025 \
     --alpha-init-from output/forecast_sequential/alpha_final_Balsas.json
+
+# C. Operational rolling 5-day forecast (4,250 forecasts)
+bwb backtest-rolling
+python scripts/analyze_backtest_rolling.py
 ```
 
 Outputs:
 
-* `output/forecast_sequential/forecast_<city>_<year>_<year+1>.csv`
-* `output/forecast_sequential/observed_<city>_<year>_<year+1>.csv`
-* `output/forecast_sequential/sequential_summary_all_cities.csv`
-* `output/forecast_sequential/alpha_final_<city>.json`
+* **Mode A**: `output/validation/validation_<TS>.{csv,parquet}`
+* **Mode B**: `output/forecast_sequential/forecast_<city>_<year>_<year+1>.csv`,
+  `observed_<city>_<year>_<year+1>.csv`,
+  `sequential_summary_all_cities.csv`,
+  `alpha_final_<city>.json`
+* **Mode C**: `output/backtest_rolling/backtest_rolling_h5d.csv`,
+  `output/paper_tables/table_backtest_rolling_summary.{csv,tex}`,
+  `figures/paper/backtest_rolling_*.png`

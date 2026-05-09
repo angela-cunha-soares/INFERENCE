@@ -1,0 +1,116 @@
+% =====================================================================
+% APPENDIX B -- DAG learning diagnostics (climate inputs vs ETo)
+% =====================================================================
+
+\refstepcounter{section}
+\phantomsection
+\section*{APPENDIX \thesection: BAYESIAN-NETWORK STRUCTURE LEARNING ON THE DAILY CLIMATE INPUTS}
+\label{app:dag}
+\addcontentsline{toc}{section}{\textbf{APPENDIX \thesection: BAYESIAN-NETWORK STRUCTURE LEARNING ON THE DAILY CLIMATE INPUTS}}
+
+\subsection*{B.1.\quad Rationale}
+
+The FAO-56 Penman--Monteith equation
+\citep{Allen1998} expresses ETo as a deterministic function of net
+radiation, vapour-pressure deficit and aerodynamic terms; it does
+not include precipitation $P$. A naive empirical regression of ETo
+on the FAO-56 inputs may nevertheless suggest a non-zero coefficient
+on $P$ through confounding (e.g.\ rainy days are also cloudy and
+humid). The structure-learning experiment of
+Section~\ref{sec:methods_dag} verifies that, on the pooled
+1961--2025 daily series across all ten MATOPIBA hubs, a
+data-driven directed acyclic graph (DAG) learnt without any
+agronomic prior recovers the Penman--Monteith parents
+($R_{\mathrm{s}}, T_{\mathrm{min}}, u_2$) of ETo and identifies $P$
+as conditionally independent of ETo given the parents.
+
+\subsection*{B.2.\quad Algorithm and reproducibility}
+
+The methodology is a deliberate replication of the
+HillClimb\,+\,BDeu pipeline of \citet{Ribeiro2022} on the same
+\verb|pgmpy| backbone \citep{Ankan2015}, broadened from their
+five-INMET-station, $\approx\!5{,}000$-record per-station experiment
+to the pooled ten-city, $237{,}410$-record Xavier reanalysis. We
+use hill-climbing search \citep{Russell2010} over the eight nodes
+(Tmax, Tmin, Tmean, RH, $u_2$, $R_{\mathrm{s}}$, $P$, ETo) guided
+by two information-theoretic scoring functions, the BDeu prior of
+\citet{Buntine1991} and the Bayesian Information Criterion of
+\citet{Schwarz1978}; only edges on which the two scorers agree are
+retained as the consensus graph. Continuous variables are
+discretised by 5-quantile binning (equal-frequency); the explicit
+binning ensures reproducibility, an omission noted in the
+discrete-BN literature \citep{Hui2022}. The learner is implemented
+in \verb|bwb.inference.dag_learning| on top of \verb|pgmpy|
+\citep{Ankan2015} and is invoked through
+\verb|scripts/learn_climate_dag.py|. The figure-rendering and
+relevance-table outputs are
+\verb|figures/paper/fig_climate_dag.png| and
+\verb|output/paper_tables/table_dag_relevance.{csv,tex}|.
+
+\subsection*{B.3.\quad Result}
+
+Direct parents of ETo recovered by the consensus DAG are
+$R_{\mathrm{s}}$, $T_{\mathrm{min}}$ and $u_2$
+(Table~\ref{tab:dag-relevance}, Figure~\ref{fig:dag-climate} of the
+main text). $\overline{\mathrm{RH}}$ and $T_{\mathrm{max}}$ appear
+as direct \emph{children} of ETo. This reflects the
+surface-atmosphere feedback in the diurnal cycle: the integrated
+atmospheric demand (driven by net radiation and aerodynamic transport)
+dictates the boundary-layer humidity and the near-surface peak
+temperature, rather than the reverse. The data-driven scorer
+therefore prefers an arrow from ETo to those nodes — a structural
+signature of the causal direction of the daytime energy budget on
+which the Penman--Monteith expression is built. Reading the graph as
+a Markov-1 transition kernel of the daytime water-vapour cycle, RH
+and $T_\mathrm{max}$ are the proximate \emph{responses} to the
+demand integrated by ETo, not its proximate \emph{causes}. Precipitation $P$ is identified as conditionally
+independent of ETo: the consensus algorithm does not retain any
+edge between $P$ and ETo at the BDeu/BIC threshold. This is the
+expected structural recovery of the Penman--Monteith expression and
+matches the empirical observation in
+\citet{Ribeiro2024}. The result motivates two operational
+decisions in the framework: (i) the evapotranspiration model on the
+fused product is the full PM equation rather than a reduced
+$P$-aware regressor; (ii) the seasonal class label
+($\{\mathrm{dry}, \mathrm{normal}, \mathrm{wet}\}$) is computed on
+the SPEI of the seasonal water balance $D = P_{\mathrm{total}} -
+\mathrm{ET}_{0,\mathrm{total}}$ rather than on $P$ alone, so that
+the conditional dependency structure between $P$ and atmospheric
+demand is explicit in the index used for resampling.
+
+\subsection*{B.4.\quad Comparison with \citet{Ribeiro2022}}
+
+\citet{Ribeiro2022} learnt the BN over a smaller variable set
+($T_\mathrm{min}, T_\mathrm{max}, T_\mathrm{mean}, RH_\mathrm{min},
+RH_\mathrm{max}, u_2, R_\mathrm{s}$) on five MATOPIBA INMET
+stations and reported $u_2$ and $RH_\mathrm{min}$ as the parents
+of $\mathrm{ET}_0$, with $T_\mathrm{max}$ and $RH_\mathrm{max}$
+identified as direct \emph{children}. Our consensus DAG agrees
+on $u_2$ as a parent and on $T_\mathrm{max}/RH$ as direct children
+of ETo, and adds $R_\mathrm{s}$ and $T_\mathrm{min}$ to the parent
+set. Three reasons explain why our parent set is richer:
+(i) the pooled Xavier sample is two orders of magnitude larger than
+the per-station INMET subsets used in \citep{Ribeiro2022}, which
+sharpens the BDeu/BIC discrimination between true parents and
+co-parents; (ii) we use mean RH rather than $RH_\mathrm{min}$ as
+the moisture node, which avoids the daily-cycle redundancy that
+otherwise inflates the in-degree on the relative-humidity side; and
+(iii) we explicitly include precipitation $P$ as a node, which
+exposes $P$ as conditionally independent of ETo (a consistency
+check absent from the \citep{Ribeiro2022} setup, which deliberately
+excluded $P$ from the start). Crucially, both studies converge on
+the qualitative finding that $u_2$ is a load-bearing parent of ETo
+and that the qualitative dependency structure is portable across
+hubs of MATOPIBA, supporting the generalisation claim of
+\citep{Ribeiro2022} on the larger validation grid used here.
+
+\subsection*{B.5.\quad Limitations}
+
+The 5-quantile discretisation hides finer-grained
+non-linearities; the result is a coarse-grained encoding of the
+qualitative dependency structure and \emph{not} a quantitative
+regression. The BDeu prior assumes Dirichlet--Multinomial local
+parameter priors with equivalent sample size $N=10$; sensitivity to
+the equivalent-sample-size hyperparameter was inspected on the
+$N \in \{1, 5, 10, 50\}$ grid and the consensus parents of ETo are
+invariant.

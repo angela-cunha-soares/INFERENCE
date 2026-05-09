@@ -1,0 +1,10 @@
+regime,class,n_obs_in_regime,static_dirichlet,empirical,dbn_post_mean,dbn_post_lo95,dbn_post_hi95
+la_nina,dry,21,0.343,0.286,0.311,0.159,0.484
+la_nina,normal,21,0.328,0.381,0.361,0.201,0.542
+la_nina,wet,21,0.328,0.333,0.327,0.173,0.505
+neutral,dry,23,0.343,0.348,0.349,0.193,0.528
+neutral,normal,23,0.328,0.174,0.231,0.093,0.396
+neutral,wet,23,0.328,0.478,0.420,0.258,0.597
+el_nino,dry,20,0.343,0.400,0.380,0.217,0.560
+el_nino,normal,20,0.328,0.450,0.398,0.233,0.587
+el_nino,wet,20,0.328,0.150,0.222,0.084,0.387

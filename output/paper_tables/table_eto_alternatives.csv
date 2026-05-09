@@ -1,0 +1,21 @@
+city,formula,n,bias,rmse,r,pm_mean
+Baixa Grande do Ribeiro,Hargreaves-Samani,23741,0.8604,1.0586,0.7559,4.1924
+Baixa Grande do Ribeiro,Benavides-Lopez,23741,1.2010,1.4064,0.8341,4.1924
+Balsas,Hargreaves-Samani,23741,0.9508,1.1381,0.7277,4.0784
+Balsas,Benavides-Lopez,23741,1.3129,1.5212,0.8072,4.0784
+Barreiras,Hargreaves-Samani,23741,0.7679,0.9840,0.7941,4.3448
+Barreiras,Benavides-Lopez,23741,0.7711,1.0739,0.7911,4.3448
+Bom Jesus,Hargreaves-Samani,23741,0.6650,1.1308,0.6120,4.6594
+Bom Jesus,Benavides-Lopez,23741,1.3991,1.6054,0.8515,4.6594
+Campos Lindos,Hargreaves-Samani,23741,0.9696,1.1122,0.7745,3.9992
+Campos Lindos,Benavides-Lopez,23741,1.1422,1.3372,0.8075,3.9992
+Correntina,Hargreaves-Samani,23741,0.6741,0.9478,0.7706,4.3221
+Correntina,Benavides-Lopez,23741,0.6131,0.9535,0.7761,4.3221
+Formosa do Rio Preto,Hargreaves-Samani,23741,0.8650,1.0930,0.7601,4.3869
+Formosa do Rio Preto,Benavides-Lopez,23741,0.8795,1.1284,0.8206,4.3869
+Luis Eduardo Magalhaes,Hargreaves-Samani,23741,0.7580,0.9706,0.7743,4.1562
+Luis Eduardo Magalhaes,Benavides-Lopez,23741,0.6730,0.9904,0.7822,4.1562
+Tasso Fragoso,Hargreaves-Samani,23741,0.9355,1.1207,0.7593,4.2302
+Tasso Fragoso,Benavides-Lopez,23741,1.2801,1.4638,0.8362,4.2302
+Urucui,Hargreaves-Samani,23741,0.7888,1.0151,0.7725,4.3535
+Urucui,Benavides-Lopez,23741,1.4198,1.6300,0.8484,4.3535

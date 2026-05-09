@@ -1,0 +1,180 @@
+% =====================================================================
+% APPENDIX A — Multi-source fused product validation against INMET
+% Author: Angela Cunha Soares
+% Generated: 2026-05-07
+% Sources:
+%   output/inmet_validation/per_station_summary.csv
+%   output/inmet_validation/pooled_summary.csv
+%   output/paper_tables/table_inmet_validation.tex
+% =====================================================================
+
+\refstepcounter{section}
+\phantomsection
+\section*{APPENDIX \thesection: VALIDATION OF THE NASA POWER + OPEN-METEO FUSED CLIMATE PRODUCT AGAINST IN SITU INMET STATIONS (JAN--MAY 2026)}
+\label{app:inmet_validation}
+\addcontentsline{toc}{section}{\textbf{APPENDIX \thesection: VALIDATION OF THE NASA POWER + OPEN-METEO FUSED CLIMATE PRODUCT AGAINST IN SITU INMET STATIONS}}
+
+\subsection*{A.1.\quad Rationale}
+
+The 1961--2025 backtest of Section~\ref{sec:methods_forecast} is driven
+by the Brazilian Daily Weather Gridded Data of \citet{Xavier2022},
+which provides the only continuous high-quality precipitation and
+ETo series spanning 65 years for the MATOPIBA hubs. Operational
+deployment after the publication cutoff requires a substitute
+because (i) Xavier is not updated in real time, and (ii) the curated
+product cannot be queried from a farm-management software. The
+candidate replacement is the **multi-source fusion** of NASA POWER
+(MERRA-2, 1990--present) and Open-Meteo Archive (ERA5, 1940--present),
+augmented with Open-Meteo Forecast (best-match NWP, today $\pm$ 5 days)
+in the operational horizon. Per-variable weights for the fusion follow
+the EVAOnline calibration of \citet{Ribeiro2024} against BR-DWGD at
+17 sites in Brazil.
+
+This appendix verifies the transfer of those weights to MATOPIBA by
+comparing the daily fused product to in situ measurements from the
+INMET automatic station network during the only window where direct
+ground-truth data are available at the time of writing (1 January
+2026 to 7 May 2026, 127 days).
+
+\subsection*{A.2.\quad Stations and coverage}
+
+Five INMET automatic stations sit within or directly adjacent to the
+ten MATOPIBA cities used in this study; the conventional station 82768
+in Balsas/MA samples only three times daily and is excluded.
+Table~\ref{tab:inmet-stations} lists the active stations and their
+post-QC coverage for January--May 2026.
+
+\begin{table}[t]
+\centering
+\caption{INMET automatic stations used in the fused-product validation.
+Coverage is the percentage of hourly records with a non-null reading
+in the Jan--May 2026 file before any per-variable filtering. Stations
+A346, A375 and A416 cleared the per-variable QC threshold of $\geq 30$
+days and contribute dedicated columns in
+Table~\ref{tab:inmet-validation}; A402 and A404 contribute only via
+the across-station pooled row.}
+\label{tab:inmet-stations}
+\begin{tabular}{llcrrrrr}
+\toprule
+Code & Municipality & UF & Lat ($^\circ$) & Lon ($^\circ$) & Elev (m)
+& Hourly cov. & Days kept \\
+\midrule
+A346 & Urucu\'i                  & PI & $-7.44$  & $-44.34$ & 399 & 98\,\% & 85 \\
+A375 & Baixa Grande do Ribeiro  & PI & $-8.33$  & $-45.09$ & 519 & 97\,\% & 126 \\
+A416 & Correntina               & BA & $-13.33$ & $-44.62$ & 552 & 99\,\% & 126 \\
+A402 & Barreiras                & BA & $-12.12$ & $-45.03$ & 474 & 25\,\% & 36 (pooled only) \\
+A404 & Lu\'is Eduardo Magalh\~aes & BA & $-12.08$ & $-45.71$ & 748 & 52\,\% & 113 (pooled only) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{A.3.\quad Hourly-to-daily aggregation and quality control}
+
+Hourly INMET records were aggregated to the local civil day (UTC$-3$)
+following FAO-56 conventions: $T_\mathrm{max}$ and $T_\mathrm{min}$ as
+the per-day extrema of the hourly maximum/minimum readings;
+$\overline{T}$, $\overline{\mathrm{RH}}$ and $\overline{u_{10}}$ as
+hourly means; and $R_\mathrm{s}$ as the daily sum of incoming
+shortwave radiation, converted from kJ\,m$^{-2}$ to MJ\,m$^{-2}$\,d$^{-1}$.
+Wind at 10\,m was converted to the 2\,m reference height through
+FAO-56 Eq.\,47, $u_2 = u_{10}\cdot 4.87/\ln(67.8\cdot 10 - 5.42)$,
+which evaluates to $u_2 \approx 0.748\,u_{10}$ and matches the
+``approximately 0.75'' rule of thumb of \citet{Allen1998}.
+Reference evapotranspiration was then computed on the cleaned daily
+series using the same FAO-56 Penman-Monteith routine
+(\verb|compute_eto_fao56_pm|) that is applied downstream of the fusion
+operator, so that any structural difference in this comparison
+attaches to the climate inputs rather than to the ET formulation.
+
+For each variable a daily aggregate enters the comparison only when
+its hourly coverage clears a sensor-specific threshold:
+$\geq 20$\,h for $T$, $\geq 18$\,h for RH, $\geq 20$\,h for wind, and
+$\geq 8$\,h for $R_\mathrm{s}$ (only daylight hours carry non-null
+radiation). Days with fewer valid hours are masked variable-by-variable;
+a station enters the per-station column of
+Table~\ref{tab:inmet-validation} only if $\geq 4$ variables retain
+$\geq 30$ daily aggregates.
+
+\subsection*{A.4.\quad An anomaly in the INMET wind record}
+
+For all three high-coverage stations, $\geq 70\,\%$ of the hourly
+anemometer records register exactly $0$\,m\,s$^{-1}$, dragging the
+daily mean to roughly $0.15$\,m\,s$^{-1}$. Reference wind speeds for
+Cerrado/MATOPIBA at 2\,m sit between 1.5 and 3\,m\,s$^{-1}$
+\citep{Allen1998}, so the per-station $u_2$ row in
+Table~\ref{tab:inmet-validation} compares the alternative sources
+against a degenerate ground truth. We retain that row in the table
+to make the issue visible (marked with a dagger), but the
+informative wind metric is the pooled row, which compares the
+\emph{within-station anomaly} of each daily reading and is therefore
+immune to the station-level offset.
+
+\subsection*{A.5.\quad Result --- fused product wins on 5 of 7 variables}
+
+Table~\ref{tab:inmet-validation} (located in
+Section~\ref{sec:methods_data}) reports per-station and pooled RMSE for
+NASA POWER, Open-Meteo Archive and the EVAOnline-weighted Fused
+product against the INMET reference. The fused product attains the
+lowest pooled RMSE for $\mathrm{RH}$, $R_\mathrm{s}$, $P$, $u_2$
+(anomaly) and $\mathrm{ET}_0$. Open-Meteo Archive (ERA5) wins for
+$T_\mathrm{max}$ and $T_\mathrm{min}$ alone, by a small margin
+($\Delta$RMSE $< 0.18\,^\circ$C), reflecting that
+$\mathrm{HIST}_\mathrm{NASA}$ assigns those two variables a weight
+near 0.5; the fusion's improvement is therefore small, and the noise
+of a 127-day window can swing it. Crucially, ET$_0$ --- the variable
+that drives the irrigation forecast --- is best reproduced by the
+fused product (pooled RMSE $0.54$ vs.\ $0.58$ for Archive and
+$0.60$ for NASA POWER, a $-7\,\%$ to $-10\,\%$ reduction).
+
+\subsection*{A.6.\quad Comparison against reduced-input ET formulas}
+
+To put the residual disagreement of $0.54$\,mm\,d$^{-1}$ in context,
+Table~\ref{tab:eto-alternatives} reports the corresponding daily
+RMSE of two reduced-input formulas commonly recommended when the
+full Penman-Monteith inputs are unavailable: Hargreaves-Samani
+\citep{Hargreaves1985} and Benavides-Lopez \citep{Benavides1970}.
+On the same 10 MATOPIBA cities and the longer 1961--2025 Xavier
+window, the median RMSEs are $1.08$\,mm\,d$^{-1}$ for
+Hargreaves-Samani and $1.37$\,mm\,d$^{-1}$ for Benavides-Lopez ---
+two to three times larger than the disagreement between the fused
+product and INMET. This indicates that the operational pipeline
+keeps the full Penman-Monteith equation, recomputed on the fused
+inputs, rather than substituting a reduced formula even though the
+fused inputs are themselves estimates rather than direct measurements.
+
+\subsection*{A.7.\quad Limitations}
+
+\begin{itemize}
+  \item \textbf{Window is short.} 127 days, January to early May 2026.
+  Inter-annual variability and dry-season behaviour are not exercised.
+  \item \textbf{Spatial coverage is partial.} Three of ten MATOPIBA
+  cities have a dedicated column; two more contribute via the pooled
+  row; five (Bom Jesus, Campos Lindos, Formosa do Rio Preto, Tasso
+  Fragoso and Balsas) have no INMET automatic station and are not
+  represented in this validation.
+  \item \textbf{Point-vs-grid representativity.} INMET stations are
+  point measurements; NASA POWER reports on a $0.5^\circ\times
+  0.625^\circ$ grid; Open-Meteo Archive interpolates to the requested
+  coordinate from a $0.25^\circ$ native grid. Some of the residual
+  RMSE is representativity error, not source error.
+  \item \textbf{The 90-day soybean cycle does not fit inside the
+  INMET window.} A typical 1 December planting date predates the
+  INMET coverage start of 3 January 2026, so a cycle-level
+  verification of the rolling 5-day forecast against INMET ground
+  truth is not feasible in the current window. We list it as future
+  work (Section~\ref{sec:discussion_limits}) for the
+  2026/2027 harvest, which will fall entirely inside the next INMET
+  release window.
+\end{itemize}
+
+\subsection*{A.8.\quad Reproducibility}
+
+The validation pipeline is implemented in
+\verb|scripts/inmet_validation_multistation.py|. Per-station daily
+aggregates with QC counters are written to
+\verb|output/inmet_validation/per_station/|, the side-by-side aligned
+comparison files are in the same folder, and the per-variable
+metrics CSVs feeding Table~\ref{tab:inmet-validation} are at
+\verb|output/inmet_validation/per_station_summary.csv| and
+\verb|output/inmet_validation/pooled_summary.csv|.
+The raw INMET hourly downloads are in \verb|data_raw/inmet/|.

@@ -8,6 +8,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Climatologically-informed Dirichlet prior** for the sequential forecast
+  (`src/bwb/forecast/climatological.py`): alpha_2020 = SPEI-tercile counts on
+  1961-2019 plus a unit smoother. The previous uniform-prior outputs are
+  archived under `output/forecast_sequential_uniform_prior_archive/` for
+  ablation reproducibility.
+- **Operational rolling 5-day forecast** (`src/bwb/forecast/rolling.py`,
+  `bwb backtest-rolling`) with ten-city verification table
+  (`output/paper_tables/table_backtest_rolling_summary.{csv,tex}`) and four
+  paper figures (`figures/paper/backtest_rolling_*.png`).
+- **DAG structure learning over the climate inputs** (`src/bwb/inference/
+  dag_learning.py`, `scripts/learn_climate_dag.py`,
+  `figures/paper/fig_climate_dag.png`,
+  `output/paper_tables/table_dag_relevance.{csv,tex}`) and Manuscript
+  Appendix B (`manuscript/appendix_dag.tex`).
+- **ENSO-conditioned dynamic Bayesian network** (`src/bwb/models/
+  dbn_ensoclass.py`, `scripts/fit_dbn_enso.py`,
+  `output/state_space/trace_dbn_enso.nc`,
+  `figures/paper/fig_dbn_enso.png`,
+  `output/paper_tables/table_dbn_enso.{csv,tex}`).
+- **Multi-source fused climate product** (NASA POWER + Open-Meteo Archive,
+  `src/bwb/data/sources/climate/{nasa_power,openmeteo,fusion}.py`) with
+  in-situ INMET validation across five MATOPIBA stations
+  (`scripts/inmet_validation_multistation.py`,
+  `output/paper_tables/table_inmet_validation.tex`,
+  Manuscript Appendix A).
+- **Reduced-input ETo alternatives benchmark** (Hargreaves-Samani vs.
+  Benavides-Lopez vs. Penman-Monteith on the Xavier 1961-2025 series:
+  `scripts/eto_alternatives_comparison.py`,
+  `output/paper_tables/table_eto_alternatives.{csv,tex}`,
+  `figures/paper/fig_eto_alternatives.png`).
+- **MCMC convergence diagnostics table** for the state-space model
+  (`scripts/generate_mcmc_diagnostics.py`,
+  `output/paper_tables/table_mcmc_diagnostics.{csv,tex}`).
+- **Methodology flowchart** (`scripts/generate_methodology_flowchart.py`,
+  `figures/paper/methodology_flowchart.{png,pdf}`).
+- **Operational notebook** (`notebooks/operational_irrigation_5day.ipynb`)
+  demonstrating the rolling 5-day forecast end-to-end (gitignored due to
+  output cell size).
+- Helper scripts `scripts/generate_forecast_seq_tables.py` and
+  `scripts/check_tex_refs.py`.
+- Bib entries `Kling2012`, `Moriasi2007` to support the rolling-backtest
+  table.
+
+### Changed
+- Manuscript ([manuscript/manuscript.tex](manuscript/manuscript.tex))
+  refreshed end-to-end: abstract, Eq.~(5), Tables `tab:forecast_seq`,
+  `tab:forecast_by_city`, `tab:forecast_by_cycle`, Discussion and
+  Conclusion now reflect the climatologically-informed prior. The
+  sequential-forecast median CRPS dropped from 23.0 mm (uniform prior)
+  to 18.2 mm (informed prior); coverage on daily soil-water content
+  remains 0.954 (mean) at the nominal 0.90 level.
+- `output/paper_tables/table_backtest_rolling_summary.tex`: removed
+  invalid `\citet{methodology_diagram}` reference.
+- `.gitignore`: added `data_raw/inmet/`, `output/_exploratory/`,
+  `output/inmet_validation/_cache/`, and the operational notebook.
+- The exploratory single-city A/B fusion benchmark
+  (`scripts/backtest_ab_fusion.py`) was archived under
+  `output/_exploratory/backtest_ab_fusion/`; a systematic ten-city
+  assessment is deferred to a companion deployment study.
+
 - Complete `src/bwb/` package structure with 17 populated modules
 - Bayesian inference modules: `mcmc.py`, `diagnostics.py`, `ppc.py`, `vi.py`
 - Decision module: `utility.py` with probabilistic irrigation rules
