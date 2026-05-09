@@ -36,14 +36,13 @@ output/_exploratory/
 temp/
 *.log
 
-# Heavy raw data (não versionar)
+# Heavy raw data - NÃO versionar
 data_raw/
 
-# Specific large files (redundante se usar data_raw/, mas ok manter)
-data_raw/shapefile/
+# Specific large files
 figures/paper/study_area_map.pdf
 
-# Claude (arquivos locais)
+# Local tools
 .claude/
 
 # GitHub
