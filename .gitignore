@@ -36,11 +36,11 @@ output/_exploratory/
 temp/
 *.log
 
-# Heavy raw data - NÃO versionar
+# Heavy raw data
 data_raw/
 
-# Specific large files
-figures/paper/study_area_map.pdf
+# Documents and figures
+*.pdf
 
 # Local tools
 .claude/
