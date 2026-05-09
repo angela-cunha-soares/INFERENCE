@@ -1,6 +1,6 @@
 # bwb -- Bayesian Water Balance framework
 
-A hierarchical Bayesian framework for stochastic water-balance modelling and
+A hierarchical Bayesian framework for stochastic water-balance modeling and
 risk-aware irrigation scheduling, validated across the **MATOPIBA**
 agricultural frontier (Maranhao, Tocantins, Piaui, Bahia -- Brazil).
 
@@ -111,7 +111,7 @@ pass `--profile <name>` to the CLI.
 
 Use `scripts/extract_xavier_matopiba.py`, `scripts/download_oni.py`,
 `scripts/download_mei.py` and `scripts/oceanic_indices_consolidator.py` to
-regenerate the processed artefacts when the raw inputs are refreshed.
+regenerate the processed artifacts when the raw inputs are refreshed.
 
 ## Validation snapshot
 
@@ -145,7 +145,7 @@ Aggregate metrics across the 150 successful fits:
 
 Strictly causal forecast (training on 1961..c-1, evaluation on cycle c)
 across **10 cities x 5 cycles (2020/21..2024/25) = 50 combinations**,
-initialised with a climatologically-informed Dirichlet prior on the
+initialized with a climatologically-informed Dirichlet prior on the
 SPEI-tercile counts of the 1961-2019 training window plus a unit
 smoother. Run `bwb forecast-sequential --n-sim 500` or
 `python scripts/generate_forecast_seq_tables.py` for the LaTeX tables.
@@ -163,7 +163,7 @@ Aggregate skill across the 50 forecast cycles:
 
 *Climatological forecast intervals are conservatively calibrated; the
 KGE on the daily trajectory is negative by design (a climatological
-forecast does not aim to predict the realised daily sequence).*
+forecast does not aim to predict the realized daily sequence).*
 
 ### C. Operational rolling 5-day forecast (4,250 forecasts)
 
@@ -172,6 +172,26 @@ deterministic baseline (Xavier observed P and ETo) across day 0
 through day 84 of the five 2020-2024 cycles for the ten MATOPIBA hubs:
 **N = 4,250 forecasts** in aggregate. Median KGE +0.32, mean CRPS
 2.65 mm, coverage_90 = 0.970.
+
+## Manuscript
+
+Source files for the Computers and Electronics in Agriculture
+submission live in [`manuscript/`](manuscript/). Two helper scripts
+verify that every claim in the LaTeX text is consistent with the
+artifacts in `output/`:
+
+```bash
+python scripts/audit_labels.py   # \label vs \ref completeness
+python scripts/audit_numbers.py  # numerical claims vs CSVs/JSONs
+```
+
+Climatological-forecast figures (`fig_forecast_calibration`,
+`fig_forecast_intervals_by_cycle`, `fig_forecast_trajectory_balsas`)
+are regenerated with:
+
+```bash
+python scripts/generate_forecast_seq_figures.py
+```
 
 ## Citation
 

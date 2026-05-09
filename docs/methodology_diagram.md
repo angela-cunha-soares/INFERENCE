@@ -176,7 +176,7 @@ Both modes use the same Bayesian Dirichlet posterior on the *yearly* class weigh
 
 ### Why backtests must use climatology
 
-Xavier reanalysis (and analog products such as BR-DWGD, ENA-CDS, AgERA5) cover **1961-present**. NWP archives in operational form (the THORPEX-TIGGE archive, ECMWF MARS) cover at best **2008-present** for ensemble forecasts. Backtesting our model over a 60-year span requires a horizon-weather source available throughout that span — only climatology resampling satisfies that constraint. **Any 1961-onward backtest published in this domain has the same constraint**, regardless of the modelling approach.
+Xavier reanalysis (and analog products such as BR-DWGD, ENA-CDS, AgERA5) cover **1961-present**. NWP archives in operational form (the THORPEX-TIGGE archive, ECMWF MARS) cover at best **2008-present** for ensemble forecasts. Backtesting our model over a 60-year span requires a horizon-weather source available throughout that span — only climatology resampling satisfies that constraint. **Any 1961-onward backtest published in this domain has the same constraint**, regardless of the modeling approach.
 
 ### Why operational deployment should use NWP
 
@@ -275,7 +275,7 @@ product should therefore be paired with a **Brazil-side reference
 (INMET station network) for periodic re-anchoring** rather than relying on
 the original Xavier-trained backtest as a skill ceiling.
 
-The artefacts of this experiment are
+The artifacts of this experiment are
 [output/backtest_ab_fusion/balsas_ab.csv](../output/backtest_ab_fusion/balsas_ab.csv)
 (per-forecast) and
 [output/backtest_ab_fusion/balsas_ab_summary.csv](../output/backtest_ab_fusion/balsas_ab_summary.csv)
@@ -369,7 +369,7 @@ MATOPIBA without retuning.
   against INMET is therefore listed as future work for the
   2026–2027 harvest.
 
-The artefacts of this experiment are
+The artifacts of this experiment are
 [output/inmet_validation/per_station_summary.csv](../output/inmet_validation/per_station_summary.csv),
 [output/inmet_validation/pooled_summary.csv](../output/inmet_validation/pooled_summary.csv),
 and [output/paper_tables/table_inmet_validation.tex](../output/paper_tables/table_inmet_validation.tex).

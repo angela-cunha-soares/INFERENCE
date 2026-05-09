@@ -43,7 +43,7 @@ implementation note relevant to any future re-tuning of the priors.
   `bwb.models.van_genuchten`; results outside this textural envelope
   should be treated cautiously.
 
-## 3. Spatial generalisation
+## 3. Spatial generalization
 
 * **Calibrated only on MATOPIBA.** The hierarchical priors and the
   default `matopiba.toml` profile were calibrated on the 10 cities of
@@ -85,7 +85,7 @@ implementation note relevant to any future re-tuning of the priors.
 ## 5. Crop and soil portability
 
 * **One crop, one soil class tested.** The framework is currently
-  parameterised and tested for soybean on *Latossolo*-class soils
+  parameterized and tested for soybean on *Latossolo*-class soils
   representative of the MATOPIBA Cerrado. Transfer to other crop ×
   soil combinations requires re-elicitation of the K_c curve and the
   hydraulic prior centres, which the regional configuration profile
@@ -134,7 +134,7 @@ implementation note relevant to any future re-tuning of the priors.
 
 * **Forecasts are at the municipality-centroid scale.** The whole
   validation grid uses IBGE urban centroids of the ten MATOPIBA
-  hubs. The realised soil-water trajectory at a given farm within a
+  hubs. The realized soil-water trajectory at a given farm within a
   hub may deviate from the centroid forecast through within-property
   spatial variability of soil texture (sandy patches vs heavier
   spots), microclimate (slope, aspect, riparian effects) and

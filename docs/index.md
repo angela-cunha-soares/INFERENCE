@@ -25,7 +25,7 @@ observation likelihood ties the latent state to a deterministic FAO-56
 reference series with HalfNormal noise. Inference uses NUTS (PyMC v5
 / PyTensor) for the non-conjugate hydraulic state-space and a closed-form
 conjugate Dirichlet--Multinomial update for the SPEI-tercile yearly
-class weights, the latter initialised with a climatologically-informed
+class weights, the latter initialized with a climatologically-informed
 prior on the 1961-2019 training window. Operational rolling 5-day
 forecasts propagate the SPEI-weighted analogue ensemble through the
 same FAO-56 recursion.
@@ -80,7 +80,7 @@ complementary validation modes:
 The 90% credible / prediction intervals are well-calibrated to
 conservatively over-covered on all three modes; the climatological-mode
 KGE is negative by design (a climatological forecast does not target
-the realised daily sequence). For risk-aware irrigation in a
+the realized daily sequence). For risk-aware irrigation in a
 high-interannual-variability region like MATOPIBA, **calibration of
 the credible intervals is the operational metric that matters most**;
 see the manuscript Discussion (Section "Operational interpretation:

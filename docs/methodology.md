@@ -18,7 +18,7 @@ separate CLI subcommand.
 
 The headline 150-combination KGE = 0.918 (median) and 90% coverage = 0.922
 come from mode **A**: it verifies that the PyMC implementation faithfully
-reproduces FAO-56 behaviour. It is not a forecast skill score.
+reproduces FAO-56 behavior. It is not a forecast skill score.
 
 The headline forecast skill scores (mean CRPS = 20.6 mm, coverage = 0.954,
 CRPSS = +0.034 against the naive climatology) come from mode **B**, which
@@ -64,7 +64,7 @@ Training set = all complete cycles in 1961..(c - 1)
 
 For example, the 2020/21 target uses **59 historical cycles (1961-2019)**;
 the 2024/25 target uses **63 historical cycles (1961-2023)** -- the
-realised 2020/21 through 2023/24 cycles enter the training set as
+realized 2020/21 through 2023/24 cycles enter the training set as
 they become observed.
 
 ### Step 2 -- Per-cycle SPEI classification
@@ -124,9 +124,9 @@ For each of N = 500 simulations:
 The aggregated distribution gives forecast quantiles SW_q05, SW_q50,
 SW_q95 and probabilistic irrigation depth I_q05, I_q50, I_q95.
 
-### Step 5 -- Evaluation against the realised cycle
+### Step 5 -- Evaluation against the realized cycle
 
-The realised cycle (Xavier P, ETo for cycle c) is fed into the same
+The realized cycle (Xavier P, ETo for cycle c) is fed into the same
 FAO-56 deterministic baseline to obtain the observed SW_obs and I_obs.
 Skill scores:
 
@@ -135,7 +135,7 @@ Skill scores:
 
 ### Step 6 -- Sequential update
 
-The realised cycle is classified using the *training-set* tercile
+The realized cycle is classified using the *training-set* tercile
 thresholds (no retraining), and its observed class increments alpha:
 
 ```

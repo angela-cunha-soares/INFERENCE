@@ -50,23 +50,41 @@ human decision:
 ## Numbers reported
 
 Every numerical value in the manuscript is reproducible from the open
-artefacts in this repository:
+artifacts in this repository. Two helper scripts bundled with the
+project verify both consistency and freshness:
+
+```bash
+python scripts/audit_labels.py   # \label vs \ref completeness
+python scripts/audit_numbers.py  # every numerical claim vs CSVs/JSONs
+```
 
 | Section | Source |
 |---|---|
-| Posterior-recovery (Table 2) | `output/validation/validation_*.csv` reproduced with `bwb posterior-recovery` |
-| Sobol' sensitivity (Table 3) | `output/sensitivity/sobol_Balsas_2023.json` reproduced with `bwb sensitivity --city Balsas --cycle 2023 --n 1000` |
-| Climatological forecast (Tables 4-6) | `output/forecast_sequential/sequential_summary_all_cities.csv` reproduced with `bwb forecast-sequential --n-sim 500` |
-| Calibration history (Table 7) | `CHANGELOG.md` and version-controlled commits |
+| Posterior-recovery (Table `tab:posterior_recovery`, `tab:per_depth`) | `output/paper_tables/table_global_metrics.csv`, `output/paper_tables/table_per_depth.csv` (reproduce with `bwb posterior-recovery`) |
+| MCMC diagnostics (Table `tab:mcmc-diagnostics`) | `output/paper_tables/table_mcmc_diagnostics.csv` (reproduce with `scripts/generate_mcmc_diagnostics.py`) |
+| Sobol' sensitivity (Table `tab:sobol`) | `output/sensitivity/sobol_Balsas_2023.json` (reproduce with `bwb sensitivity --city Balsas --cycle 2023 --n 1000`) |
+| Climatological forecast (Tables `tab:forecast_seq`, `tab:forecast_by_city`, `tab:forecast_by_cycle`, `tab:sequential_all_cities`) | `output/forecast_sequential/sequential_summary_all_cities.csv` (reproduce with `bwb forecast-sequential --n-sim 500`) |
+| Climatological-forecast figures (`fig:forecast_calibration`, `fig:forecast_intervals_by_cycle`, `fig:forecast_trajectory_balsas`) | `python scripts/generate_forecast_seq_figures.py` (reads `output/forecast_sequential/`) |
+| Operational rolling forecast (Table `tab:backtest-rolling`) | `output/backtest_rolling/backtest_rolling_h5d.csv` (reproduce with `bwb backtest-rolling`) |
+| DAG / DBN (Tables `tab:dag-relevance`, `tab:dbn-enso`) | `output/paper_tables/table_dag_relevance.csv`, `output/paper_tables/table_dbn_enso.csv` |
+| Calibration history (Table `tab:calibration_history`) | `CHANGELOG.md` and version-controlled commits |
+| INMET fused-product validation (Appendix A, Table `tab:inmet-validation`) | `output/inmet_validation/per_station_summary.csv`, `output/inmet_validation/pooled_summary.csv` |
+| ETo alternatives (Table `tab:eto-alternatives`) | `output/paper_tables/table_eto_alternatives.csv` |
 
 ## Status (snapshot)
 
-* Methodology section: aligned with the implemented codebase.
-* Results section: filled with real numbers from the 200 validation runs
-  (150 posterior-recovery + 50 climatological forecast).
+* Methodology: aligned with the implemented codebase.
+* Results: real numbers from 4{,}450 runs (150 posterior-recovery + 50
+  climatological forecast + 4{,}250 rolling 5-day forecasts).
 * Discussion: drafted with explicit limitations and roadmap.
-* Conclusion: written.
-* References: 26 entries, complete for the current text.
+* Conclusion: written, ends with risk-aware decision-support anchor.
+* American English throughout (`scripts/audit_labels.py` and
+  `scripts/audit_numbers.py` confirm zero orphan labels and zero stale
+  numbers as of the last commit).
+* References: 50+ entries in `references.bib`.
+* Appendices: A (INMET fused-product validation), B (DAG climate
+  structure learning), C (sequential forecast detailed results), D
+  (daily SW trajectory atlas at Balsas).
 
 ## Items NOT yet implemented but mentioned only as future work
 

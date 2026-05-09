@@ -37,7 +37,7 @@ by two information-theoretic scoring functions, the BDeu prior of
 \citet{Buntine1991} and the Bayesian Information Criterion of
 \citet{Schwarz1978}; only edges on which the two scorers agree are
 retained as the consensus graph. Continuous variables are
-discretised by 5-quantile binning (equal-frequency); the explicit
+discretized by 5-quantile binning (equal-frequency); the explicit
 binning ensures reproducibility, an omission noted in the
 discrete-BN literature \citep{Hui2022}. The learner is implemented
 in \verb|bwb.inference.dag_learning| on top of \verb|pgmpy|
@@ -101,12 +101,12 @@ check absent from the \citep{Ribeiro2022} setup, which deliberately
 excluded $P$ from the start). Crucially, both studies converge on
 the qualitative finding that $u_2$ is a load-bearing parent of ETo
 and that the qualitative dependency structure is portable across
-hubs of MATOPIBA, supporting the generalisation claim of
+hubs of MATOPIBA, supporting the generalization claim of
 \citep{Ribeiro2022} on the larger validation grid used here.
 
 \subsection*{B.5.\quad Limitations}
 
-The 5-quantile discretisation hides finer-grained
+The 5-quantile discretization hides finer-grained
 non-linearities; the result is a coarse-grained encoding of the
 qualitative dependency structure and \emph{not} a quantitative
 regression. The BDeu prior assumes Dirichlet--Multinomial local

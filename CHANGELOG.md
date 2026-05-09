@@ -8,6 +8,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Three new manuscript figures** generated from the climatological-forecast
+  outputs (English labels, sourcing `output/forecast_sequential/` directly):
+  `figures/paper/fig_forecast_calibration.png` (realized vs forecast q50
+  scatter with 90% CI), `figures/paper/fig_forecast_intervals_by_cycle.png`
+  (per-cycle credible intervals across 10 hubs), and
+  `figures/paper/fig_forecast_trajectory_balsas.png` (daily SW band vs
+  FAO-56 baseline at Balsas across the 5 cycles).
+- **New figure-generation script** `scripts/generate_forecast_seq_figures.py`
+  reading `output/forecast_sequential/sequential_summary_all_cities.csv` and
+  the per-cycle forecast/observed CSVs.
+- **Audit utilities** `scripts/audit_labels.py` (label-vs-ref consistency
+  across the LaTeX build set) and `scripts/audit_numbers.py` (re-verify
+  every numerical claim in the manuscript against the source CSVs/JSONs).
+- **New Appendix D** in the manuscript (`app:trajectory_balsas`) presenting
+  the daily SW trajectory at Balsas, supporting the calibration-first
+  argument of `sec:discussion_calibration_first`.
+- **Notation table forward-reference** at the start of `sec:methods`
+  (`tab:notation`), and explicit cross-references to `eq:irrig_rule` and
+  `eq:dbn` from the surrounding text.
+
+### Changed
+- **Manuscript converted to American English** (BrE -> AmE): -ised -> -ized,
+  artefact -> artifact, behaviour -> behavior, centre -> center, colour ->
+  color, favour -> favor, grey -> gray, labelled -> labeled, modelling ->
+  modeling, summarised -> summarized, etc. Same conversion propagated to
+  `README.md`, `CHANGELOG.md`, `docs/*.md`, `manuscript/README.md`, and the
+  appendix .tex files. Two literal "Niño" -> "Ni\~no" for elsarticle
+  consistency with the 21 other escaped occurrences.
+- **Manuscript `sec:results_pymc`** gained a per-soil-depth robustness
+  paragraph and `tab:per_depth` (KGE 0.914/0.911/0.903 across
+  40/60/80 cm).
+- **Manuscript `sec:methods_inference`** explicitly cites the DAG ↔
+  Penman-Monteith conditional independence as the structural
+  justification for keeping PM as the deterministic core.
+- **Manuscript `sec:results_forecast`** gained a "Seasonal irrigation
+  volume is recovered with sub-decimetre accuracy" paragraph (median
+  |I_total error| 29.2 mm, mean signed +3.9 mm) with two new in-text
+  figure cross-references (`fig:forecast_calibration`,
+  `fig:forecast_intervals_by_cycle`).
+- **Manuscript `sec:discussion_calibration_first`** reinforces the
+  "phase penalty" interpretation of the negative daily KGE/NSE.
+- **Manuscript Conclusion** ends with an explicit risk-aware
+  decision-support anchor sentence.
+- **`appendix_dag.tex` §B.3** rewords the RH/T_max children of ETo as a
+  surface-atmosphere feedback signature of the daytime energy budget.
+- **Figure layout fix**: `fig:coverage_hist` moved from `sec:results_forecast`
+  to `sec:results_pymc` next to its only citation.
+
+### Removed
+- **12 legacy Portuguese figures** that were temporarily added to the
+  manuscript: `output/violin_*.png`, `output/balanco_diario_*.png`,
+  `output/violin_todos_ciclos.png`, and `figures/paper/fig_irrigation_summary.png`.
+  These were generated from the April 30 state-space inference run and
+  showed a different quantity (daily Bayesian posterior, not climatological
+  forecast distribution) than what their captions described. Replaced by
+  the three English figures above sourced from the May 6 climatological
+  forecast run.
+
+### Added
 - **Climatologically-informed Dirichlet prior** for the sequential forecast
   (`src/bwb/forecast/climatological.py`): alpha_2020 = SPEI-tercile counts on
   1961-2019 plus a unit smoother. The previous uniform-prior outputs are

@@ -1,7 +1,7 @@
 # Acronyms and Methods — paper-ready glossary
 
 This document is the canonical reference for all acronyms, parameters,
-equations and modelling choices used in the manuscript. It is intended to be
+equations and modeling choices used in the manuscript. It is intended to be
 incorporated as the *Materials and Methods* section (or its appendix) of the
 paper. Every symbol used in the equations of [methodology.md](methodology.md)
 appears here with a one-line definition and a citation to the primary source.
@@ -193,7 +193,7 @@ For each target cycle $c$ in $\{2020, 2021, ..., 2024\}$:
 3. Run the FAO-56 daily water balance with that season's forcings.
 4. Aggregate the $N_{\text{sim}}$ trajectories → distribution of $\text{SW}_d$
    and $I_d$.
-5. After observing the realised cycle's class $\kappa^*$, update
+5. After observing the realized cycle's class $\kappa^*$, update
    $\alpha_{c+1} = \alpha_c + e_{\kappa^*}$.
 
 ### 7.4 What this model is — and is not
@@ -338,6 +338,6 @@ precipitation evapotranspiration index. *J. Climate* 23(7), 1696–1718.
 Wilks, D.S. (2011). *Statistical Methods in the Atmospheric Sciences*
 (3rd ed.). Academic Press.
 
-Wolter, K.; Timlin, M.S. (2011). El Niño/Southern Oscillation behaviour
+Wolter, K.; Timlin, M.S. (2011). El Niño/Southern Oscillation behavior
 since 1871 as diagnosed in an extended multivariate ENSO index (MEI.ext).
 *Int. J. Climatol.* 31(7), 1074–1087.
